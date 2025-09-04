@@ -7,10 +7,10 @@ import (
 )
 
 func (s *BybitClientRequest) PlaceSpreadTradeOrder(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/spread/order/create",
 		secType:  secTypeSigned,
@@ -20,10 +20,10 @@ func (s *BybitClientRequest) PlaceSpreadTradeOrder(ctx context.Context, opts ...
 }
 
 func (s *BybitClientRequest) AmendSpreadTradeOrder(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/spread/order/amend",
 		secType:  secTypeSigned,
@@ -33,10 +33,10 @@ func (s *BybitClientRequest) AmendSpreadTradeOrder(ctx context.Context, opts ...
 }
 
 func (s *BybitClientRequest) CancelSpreadTradeOrder(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/spread/order/cancel",
 		secType:  secTypeSigned,
@@ -46,10 +46,10 @@ func (s *BybitClientRequest) CancelSpreadTradeOrder(ctx context.Context, opts ..
 }
 
 func (s *BybitClientRequest) CancelAllSpreadTradeOrder(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/spread/order/cancel-all",
 		secType:  secTypeSigned,
@@ -59,10 +59,10 @@ func (s *BybitClientRequest) CancelAllSpreadTradeOrder(ctx context.Context, opts
 }
 
 func (s *BybitClientRequest) GetSpreadTradeOrderHistory(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spread/order/history",
 		secType:  secTypeSigned,
@@ -72,10 +72,10 @@ func (s *BybitClientRequest) GetSpreadTradeOrderHistory(ctx context.Context, opt
 }
 
 func (s *BybitClientRequest) GetSpreadTradeHistory(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spread/execution/list",
 		secType:  secTypeSigned,
@@ -85,10 +85,10 @@ func (s *BybitClientRequest) GetSpreadTradeHistory(ctx context.Context, opts ...
 }
 
 func (s *BybitClientRequest) GetSpreadTradeInstrumentsInfo(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spread/instrument",
 		secType:  secTypeSigned,
@@ -98,10 +98,10 @@ func (s *BybitClientRequest) GetSpreadTradeInstrumentsInfo(ctx context.Context, 
 }
 
 func (s *BybitClientRequest) GetSpreadTradeOrderBook(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spread/orderbook",
 		secType:  secTypeSigned,
@@ -111,10 +111,10 @@ func (s *BybitClientRequest) GetSpreadTradeOrderBook(ctx context.Context, opts .
 }
 
 func (s *BybitClientRequest) GetSpreadTradeTickers(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spread/tickers",
 		secType:  secTypeSigned,
@@ -124,10 +124,10 @@ func (s *BybitClientRequest) GetSpreadTradeTickers(ctx context.Context, opts ...
 }
 
 func (s *BybitClientRequest) GetSpreadRecentTrade(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spread/recent-trade",
 		secType:  secTypeSigned,

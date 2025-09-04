@@ -12,8 +12,8 @@ func main() {
 
 func GetCoinInfo() {
 	client := bybit.NewBybitHttpClient("YOUR_API_KEY", "YOUR_API_SECRET", bybit.WithBaseURL(bybit.TESTNET))
-	params := map[string]interface{}{"coin": "USDT"}
-	assetResult, err := client.NewUtaBybitServiceWithParams(params).GetCoinInfo(context.Background())
+	Params := map[string]interface{}{"coin": "USDT"}
+	assetResult, err := client.NewUtaBybitServiceWithParams(Params).GetCoinInfo(context.Background())
 	if err != nil {
 		fmt.Println(err)
 		return

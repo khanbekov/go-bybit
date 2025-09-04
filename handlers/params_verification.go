@@ -4,10 +4,10 @@ import (
 	"fmt"
 )
 
-func ValidateParams(params map[string]interface{}) error {
+func ValidateParams(Params map[string]interface{}) error {
 	seenKeys := make(map[string]bool)
 
-	for key, value := range params {
+	for key, value := range Params {
 		if key == "" {
 			return fmt.Errorf("empty key found in parameters")
 		}

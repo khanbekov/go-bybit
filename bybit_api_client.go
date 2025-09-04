@@ -25,7 +25,7 @@ var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type BybitClientRequest struct {
 	c      *Client
-	params map[string]interface{}
+	Params map[string]interface{}
 	isUta  bool
 }
 
@@ -37,8 +37,8 @@ type ServerResponse struct {
 	Time       int64       `json:"time"`
 }
 
-func SendRequest(ctx context.Context, opts []RequestOption, r *request, s *BybitClientRequest, err error) ([]byte, error) {
-	r.setParams(s.params)
+func SendRequest(ctx context.Context, opts []RequestOption, r *Request, s *BybitClientRequest, err error) ([]byte, error) {
+	r.setParams(s.Params)
 	data, err := s.c.callAPI(ctx, r, opts...)
 	return data, err
 }
@@ -164,7 +164,7 @@ func NewBybitHttpClient(apiKey string, APISecret string, options ...ClientOption
 	return c
 }
 
-func (c *Client) parseRequest(r *request, opts ...RequestOption) (err error) {
+func (c *Client) parseRequest(r *Request, opts ...RequestOption) (err error) {
 	// set request options from user
 	for _, opt := range opts {
 		opt(r)
@@ -179,8 +179,8 @@ func (c *Client) parseRequest(r *request, opts ...RequestOption) (err error) {
 	queryString := r.query.Encode()
 	header := http.Header{}
 	body := &bytes.Buffer{}
-	if r.params != nil {
-		body = bytes.NewBuffer(r.params)
+	if r.Params != nil {
+		body = bytes.NewBuffer(r.Params)
 	}
 	if r.header != nil {
 		header = r.header.Clone()
@@ -189,25 +189,25 @@ func (c *Client) parseRequest(r *request, opts ...RequestOption) (err error) {
 
 	if r.secType == secTypeSigned {
 		timeStamp := GetCurrentTime()
-		header.Set(signTypeKey, "2")
-		header.Set(apiRequestKey, c.APIKey)
-		header.Set(timestampKey, strconv.FormatInt(timeStamp, 10))
+		header.Set(SignTypeKey, "2")
+		header.Set(ApiRequestKey, c.APIKey)
+		header.Set(TimestampKey, strconv.FormatInt(timeStamp, 10))
 		if r.recvWindow == "" {
 			r.recvWindow = "5000"
 		}
-		header.Set(recvWindowKey, r.recvWindow)
+		header.Set(RecvWindowKey, r.recvWindow)
 
 		var signatureBase []byte
 		if r.method == "POST" {
 			header.Set("Content-Type", "application/json")
-			signatureBase = []byte(strconv.FormatInt(timeStamp, 10) + c.APIKey + r.recvWindow + string(r.params[:]))
+			signatureBase = []byte(strconv.FormatInt(timeStamp, 10) + c.APIKey + r.recvWindow + string(r.Params[:]))
 		} else {
 			signatureBase = []byte(strconv.FormatInt(timeStamp, 10) + c.APIKey + r.recvWindow + queryString)
 		}
 		hmac256 := hmac.New(sha256.New, []byte(c.APISecret))
 		hmac256.Write(signatureBase)
 		signature := hex.EncodeToString(hmac256.Sum(nil))
-		header.Set(signatureKey, signature)
+		header.Set(SignatureKey, signature)
 	}
 	if queryString != "" {
 		fullURL = fmt.Sprintf("%s?%s", fullURL, queryString)
@@ -219,7 +219,7 @@ func (c *Client) parseRequest(r *request, opts ...RequestOption) (err error) {
 	return nil
 }
 
-func (c *Client) callAPI(ctx context.Context, r *request, opts ...RequestOption) (data []byte, err error) {
+func (c *Client) callAPI(ctx context.Context, r *Request, opts ...RequestOption) (data []byte, err error) {
 	err = c.parseRequest(r, opts...)
 	if err != nil {
 		return nil, err
@@ -280,10 +280,10 @@ func (c *Client) NewPlaceOrderService(category, symbol, side, orderType, qty str
 	}
 }
 
-func (c *Client) NewUtaBybitServiceWithParams(params map[string]interface{}) *BybitClientRequest {
+func (c *Client) NewUtaBybitServiceWithParams(Params map[string]interface{}) *BybitClientRequest {
 	return &BybitClientRequest{
 		c:      c,
-		params: params,
+		Params: Params,
 		isUta:  true,
 	}
 }
@@ -295,10 +295,10 @@ func (c *Client) NewUtaBybitServiceNoParams() *BybitClientRequest {
 	}
 }
 
-func (c *Client) NewClassicalBybitServiceWithParams(params map[string]interface{}) *BybitClientRequest {
+func (c *Client) NewClassicalBybitServiceWithParams(Params map[string]interface{}) *BybitClientRequest {
 	return &BybitClientRequest{
 		c:      c,
-		params: params,
+		Params: Params,
 		isUta:  false,
 	}
 }

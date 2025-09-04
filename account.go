@@ -7,7 +7,7 @@ import (
 )
 
 func (s *BybitClientRequest) GetTransactionLog(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
 	var endpoint string
@@ -16,7 +16,7 @@ func (s *BybitClientRequest) GetTransactionLog(ctx context.Context, opts ...Requ
 	} else {
 		endpoint = "/v5/account/contract-transaction-log"
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: endpoint,
 		secType:  secTypeSigned,
@@ -26,10 +26,10 @@ func (s *BybitClientRequest) GetTransactionLog(ctx context.Context, opts ...Requ
 }
 
 func (s *BybitClientRequest) GetFeeRates(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/account/fee-rate",
 		secType:  secTypeSigned,
@@ -39,10 +39,10 @@ func (s *BybitClientRequest) GetFeeRates(ctx context.Context, opts ...RequestOpt
 }
 
 func (s *BybitClientRequest) GetAccountWallet(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/account/wallet-balance",
 		secType:  secTypeSigned,
@@ -52,10 +52,10 @@ func (s *BybitClientRequest) GetAccountWallet(ctx context.Context, opts ...Reque
 }
 
 func (s *BybitClientRequest) GetBorrowHistory(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/account/borrow-history",
 		secType:  secTypeSigned,
@@ -65,10 +65,10 @@ func (s *BybitClientRequest) GetBorrowHistory(ctx context.Context, opts ...Reque
 }
 
 func (s *BybitClientRequest) GetCoinGreeks(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/coin-greeks",
 		secType:  secTypeSigned,
@@ -78,10 +78,10 @@ func (s *BybitClientRequest) GetCoinGreeks(ctx context.Context, opts ...RequestO
 }
 
 func (s *BybitClientRequest) GetCollateralInfo(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/account/collateral-info",
 		secType:  secTypeSigned,
@@ -91,7 +91,7 @@ func (s *BybitClientRequest) GetCollateralInfo(ctx context.Context, opts ...Requ
 }
 
 func (s *BybitClientRequest) GetAccountInfo(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/account/info",
 		secType:  secTypeSigned,
@@ -101,7 +101,7 @@ func (s *BybitClientRequest) GetAccountInfo(ctx context.Context, opts ...Request
 }
 
 func (s *BybitClientRequest) GetMMPState(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/account/mmp-state",
 		secType:  secTypeSigned,
@@ -111,7 +111,7 @@ func (s *BybitClientRequest) GetMMPState(ctx context.Context, opts ...RequestOpt
 }
 
 func (s *BybitClientRequest) GetTransferableAmount(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/account/withdrawal",
 		secType:  secTypeSigned,
@@ -121,7 +121,7 @@ func (s *BybitClientRequest) GetTransferableAmount(ctx context.Context, opts ...
 }
 
 func (s *BybitClientRequest) SetSpotHedgeMode(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/account/set-hedging-mode",
 		secType:  secTypeSigned,
@@ -131,7 +131,7 @@ func (s *BybitClientRequest) SetSpotHedgeMode(ctx context.Context, opts ...Reque
 }
 
 func (s *BybitClientRequest) UpgradeToUTA(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/account/upgrade-to-uta",
 		secType:  secTypeSigned,
@@ -141,7 +141,7 @@ func (s *BybitClientRequest) UpgradeToUTA(ctx context.Context, opts ...RequestOp
 }
 
 func (s *BybitClientRequest) SetCollateralCoin(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/account/set-collateral-switch",
 		secType:  secTypeSigned,
@@ -151,7 +151,7 @@ func (s *BybitClientRequest) SetCollateralCoin(ctx context.Context, opts ...Requ
 }
 
 func (s *BybitClientRequest) BatchSetCollateralCoin(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/account/set-collateral-switch-batch",
 		secType:  secTypeSigned,
@@ -161,7 +161,7 @@ func (s *BybitClientRequest) BatchSetCollateralCoin(ctx context.Context, opts ..
 }
 
 func (s *BybitClientRequest) SetMarginMode(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/account/set-margin-mode",
 		secType:  secTypeSigned,
@@ -171,7 +171,7 @@ func (s *BybitClientRequest) SetMarginMode(ctx context.Context, opts ...RequestO
 }
 
 func (s *BybitClientRequest) SetMarketMakerProtection(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/account/mmp-modify",
 		secType:  secTypeSigned,
@@ -181,7 +181,7 @@ func (s *BybitClientRequest) SetMarketMakerProtection(ctx context.Context, opts 
 }
 
 func (s *BybitClientRequest) ResetMarketMakerProtection(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/account/mmp-reset",
 		secType:  secTypeSigned,
@@ -191,7 +191,7 @@ func (s *BybitClientRequest) ResetMarketMakerProtection(ctx context.Context, opt
 }
 
 func (s *BybitClientRequest) RepayLiability(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/account/quick-repayment",
 		secType:  secTypeSigned,
@@ -201,7 +201,7 @@ func (s *BybitClientRequest) RepayLiability(ctx context.Context, opts ...Request
 }
 
 func (s *BybitClientRequest) GetDisconnectProtectionInfo(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/account/query-dcp-info",
 		secType:  secTypeSigned,
@@ -211,7 +211,7 @@ func (s *BybitClientRequest) GetDisconnectProtectionInfo(ctx context.Context, op
 }
 
 func (s *BybitClientRequest) GetSelfMarketProtectionGroup(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/account/smp-group",
 		secType:  secTypeSigned,

@@ -7,10 +7,10 @@ import (
 )
 
 func (s *BybitClientRequest) GetInsLoanInfo(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/ins-loan/product-infos",
 		secType:  secTypeSigned,
@@ -20,10 +20,10 @@ func (s *BybitClientRequest) GetInsLoanInfo(ctx context.Context, opts ...Request
 }
 
 func (s *BybitClientRequest) GetInsMarginCoinInfo(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/ins-loan/ensure-tokens-convert",
 		secType:  secTypeSigned,
@@ -33,10 +33,10 @@ func (s *BybitClientRequest) GetInsMarginCoinInfo(ctx context.Context, opts ...R
 }
 
 func (s *BybitClientRequest) GetInsLoanOrders(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/ins-loan/loan-order",
 		secType:  secTypeSigned,
@@ -46,10 +46,10 @@ func (s *BybitClientRequest) GetInsLoanOrders(ctx context.Context, opts ...Reque
 }
 
 func (s *BybitClientRequest) GetInsRepayOrders(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/ins-loan/repaid-history",
 		secType:  secTypeSigned,
@@ -59,7 +59,7 @@ func (s *BybitClientRequest) GetInsRepayOrders(ctx context.Context, opts ...Requ
 }
 
 func (s *BybitClientRequest) GetInsLoanToValue(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/ins-loan/ltv-convert",
 		secType:  secTypeSigned,
@@ -69,7 +69,7 @@ func (s *BybitClientRequest) GetInsLoanToValue(ctx context.Context, opts ...Requ
 }
 
 func (s *BybitClientRequest) AssociateInsLoan(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/ins-loan/association-uid",
 		secType:  secTypeSigned,
@@ -82,7 +82,7 @@ func (s *BybitClientRequest) AssociateInsLoan(ctx context.Context, opts ...Reque
 
 // Deprecated: BorrowCryptoLoan is deprecated.
 func (s *BybitClientRequest) BorrowCryptoLoan(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/crypto-loan/borrow",
 		secType:  secTypeSigned,
@@ -93,7 +93,7 @@ func (s *BybitClientRequest) BorrowCryptoLoan(ctx context.Context, opts ...Reque
 
 // Deprecated: RepayCryptoLoan is deprecated.
 func (s *BybitClientRequest) RepayCryptoLoan(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/crypto-loan/repay",
 		secType:  secTypeSigned,
@@ -104,7 +104,7 @@ func (s *BybitClientRequest) RepayCryptoLoan(ctx context.Context, opts ...Reques
 
 // Deprecated: AdjustCryptoLoanToValue is deprecated.
 func (s *BybitClientRequest) AdjustCryptoLoanToValue(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/crypto-loan/adjust-ltv",
 		secType:  secTypeSigned,
@@ -115,7 +115,7 @@ func (s *BybitClientRequest) AdjustCryptoLoanToValue(ctx context.Context, opts .
 
 // Deprecated: GetCryptoLoanCollateralInfo is deprecated.
 func (s *BybitClientRequest) GetCryptoLoanCollateralInfo(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/crypto-loan/collateral-data",
 		secType:  secTypeSigned,
@@ -126,7 +126,7 @@ func (s *BybitClientRequest) GetCryptoLoanCollateralInfo(ctx context.Context, op
 
 // Deprecated: GetCryptoLoanBorrowInfo is deprecated.
 func (s *BybitClientRequest) GetCryptoLoanBorrowInfo(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/crypto-loan/loanable-data",
 		secType:  secTypeSigned,
@@ -137,7 +137,7 @@ func (s *BybitClientRequest) GetCryptoLoanBorrowInfo(ctx context.Context, opts .
 
 // Deprecated: GetCryptoLoanBorrowLimit is deprecated.
 func (s *BybitClientRequest) GetCryptoLoanBorrowLimit(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/crypto-loan/borrowable-collateralisable-number",
 		secType:  secTypeSigned,
@@ -148,7 +148,7 @@ func (s *BybitClientRequest) GetCryptoLoanBorrowLimit(ctx context.Context, opts 
 
 // Deprecated: GetCryptoLoanUnpaidLoans is deprecated.
 func (s *BybitClientRequest) GetCryptoLoanUnpaidLoans(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/crypto-loan/ongoing-orders",
 		secType:  secTypeSigned,
@@ -159,7 +159,7 @@ func (s *BybitClientRequest) GetCryptoLoanUnpaidLoans(ctx context.Context, opts 
 
 // Deprecated: GetCryptoLoanRepaymentHistory is deprecated.
 func (s *BybitClientRequest) GetCryptoLoanRepaymentHistory(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/crypto-loan/repayment-history",
 		secType:  secTypeSigned,
@@ -170,7 +170,7 @@ func (s *BybitClientRequest) GetCryptoLoanRepaymentHistory(ctx context.Context, 
 
 // Deprecated: GetCryptoLoanBorrowHistory is deprecated.
 func (s *BybitClientRequest) GetCryptoLoanBorrowHistory(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/crypto-loan/borrow-history",
 		secType:  secTypeSigned,
@@ -181,7 +181,7 @@ func (s *BybitClientRequest) GetCryptoLoanBorrowHistory(ctx context.Context, opt
 
 // Deprecated: GetCryptoLoanMaxCollateral is deprecated.
 func (s *BybitClientRequest) GetCryptoLoanMaxCollateral(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/crypto-loan/borrow-history",
 		secType:  secTypeSigned,
@@ -192,7 +192,7 @@ func (s *BybitClientRequest) GetCryptoLoanMaxCollateral(ctx context.Context, opt
 
 // Deprecated: GetCryptoLoanAdjustHistory is deprecated.
 func (s *BybitClientRequest) GetCryptoLoanAdjustHistory(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/crypto-loan/adjustment-history",
 		secType:  secTypeSigned,
@@ -203,7 +203,7 @@ func (s *BybitClientRequest) GetCryptoLoanAdjustHistory(ctx context.Context, opt
 
 // Deprecated: GetCryptoLoanCompletedHistory is deprecated.
 func (s *BybitClientRequest) GetCryptoLoanCompletedHistory(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/crypto-loan/borrow-history",
 		secType:  secTypeSigned,
@@ -216,10 +216,10 @@ func (s *BybitClientRequest) GetCryptoLoanCompletedHistory(ctx context.Context, 
 
 // Deprecated: GetC2cLendingCoinInfo is deprecated.
 func (s *BybitClientRequest) GetC2cLendingCoinInfo(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/lending/info",
 		secType:  secTypeSigned,
@@ -230,10 +230,10 @@ func (s *BybitClientRequest) GetC2cLendingCoinInfo(ctx context.Context, opts ...
 
 // Deprecated: GetC2cLendingOrders is deprecated.
 func (s *BybitClientRequest) GetC2cLendingOrders(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/lending/history-order",
 		secType:  secTypeSigned,
@@ -244,10 +244,10 @@ func (s *BybitClientRequest) GetC2cLendingOrders(ctx context.Context, opts ...Re
 
 // Deprecated: GetC2cLendingAccountInfo is deprecated.
 func (s *BybitClientRequest) GetC2cLendingAccountInfo(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/lending/account",
 		secType:  secTypeSigned,
@@ -258,10 +258,10 @@ func (s *BybitClientRequest) GetC2cLendingAccountInfo(ctx context.Context, opts 
 
 // Deprecated: C2cDepositFunds is deprecated.
 func (s *BybitClientRequest) C2cDepositFunds(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/lending/purchase",
 		secType:  secTypeSigned,
@@ -272,10 +272,10 @@ func (s *BybitClientRequest) C2cDepositFunds(ctx context.Context, opts ...Reques
 
 // Deprecated: C2cRedeemFunds is deprecated.
 func (s *BybitClientRequest) C2cRedeemFunds(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/lending/redeem",
 		secType:  secTypeSigned,
@@ -286,10 +286,10 @@ func (s *BybitClientRequest) C2cRedeemFunds(ctx context.Context, opts ...Request
 
 // Deprecated: C2cCancelRedeemFunds is deprecated.
 func (s *BybitClientRequest) C2cCancelRedeemFunds(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/lending/redeem-cancel",
 		secType:  secTypeSigned,

@@ -11,7 +11,7 @@ func main() {
 }
 func RequestTestFund() {
 	client := bybit.NewBybitHttpClient("xxxx", "xxx", bybit.WithBaseURL(bybit.DEMO_ENV))
-	params := map[string]interface{}{
+	Params := map[string]interface{}{
 		"adjustType": 0,
 		"utaDemoApplyMoney": []map[string]interface{}{
 			{
@@ -24,7 +24,7 @@ func RequestTestFund() {
 			},
 		},
 	}
-	serverResult, err := client.NewUtaBybitServiceWithParams(params).RequestTestFund(context.Background())
+	serverResult, err := client.NewUtaBybitServiceWithParams(Params).RequestTestFund(context.Background())
 	if err != nil {
 		fmt.Println(err)
 		return

@@ -12,8 +12,8 @@ func main() {
 
 func GetEarnProduct() {
 	client := bybit.NewBybitHttpClient("YOUR_API_KEY", "YOUR_API_SECRET", bybit.WithBaseURL(bybit.TESTNET))
-	params := map[string]interface{}{"category": "FlexibleSaving"}
-	earnResult, err := client.NewUtaBybitServiceWithParams(params).GetEarnProductInfo(context.Background())
+	Params := map[string]interface{}{"category": "FlexibleSaving"}
+	earnResult, err := client.NewUtaBybitServiceWithParams(Params).GetEarnProductInfo(context.Background())
 	if err != nil {
 		fmt.Println(err)
 		return

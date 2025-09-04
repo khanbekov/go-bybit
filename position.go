@@ -7,10 +7,10 @@ import (
 )
 
 func (s *BybitClientRequest) GetPositionList(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/position/list",
 		secType:  secTypeSigned,
@@ -20,10 +20,10 @@ func (s *BybitClientRequest) GetPositionList(ctx context.Context, opts ...Reques
 }
 
 func (s *BybitClientRequest) SetPositionLeverage(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/position/set-leverage",
 		secType:  secTypeSigned,
@@ -33,10 +33,10 @@ func (s *BybitClientRequest) SetPositionLeverage(ctx context.Context, opts ...Re
 }
 
 func (s *BybitClientRequest) SwitchPositionMargin(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/position/switch-isolated",
 		secType:  secTypeSigned,
@@ -48,10 +48,10 @@ func (s *BybitClientRequest) SwitchPositionMargin(ctx context.Context, opts ...R
 // Deprecated: SetPositionTpslMode is deprecated.
 // now tpsl is based on order level
 func (s *BybitClientRequest) SetPositionTpslMode(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/position/set-tpsl-mode",
 		secType:  secTypeSigned,
@@ -61,10 +61,10 @@ func (s *BybitClientRequest) SetPositionTpslMode(ctx context.Context, opts ...Re
 }
 
 func (s *BybitClientRequest) SwitchPositionMode(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/position/switch-mode",
 		secType:  secTypeSigned,
@@ -76,10 +76,10 @@ func (s *BybitClientRequest) SwitchPositionMode(ctx context.Context, opts ...Req
 // Deprecated: SetPositionRiskLimit is deprecated.
 // Since bybit has launched auto risk limit depends on current leverage
 func (s *BybitClientRequest) SetPositionRiskLimit(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/position/set-risk-limit",
 		secType:  secTypeSigned,
@@ -89,10 +89,10 @@ func (s *BybitClientRequest) SetPositionRiskLimit(ctx context.Context, opts ...R
 }
 
 func (s *BybitClientRequest) SetPositionTradingStop(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/position/trading-stop",
 		secType:  secTypeSigned,
@@ -102,10 +102,10 @@ func (s *BybitClientRequest) SetPositionTradingStop(ctx context.Context, opts ..
 }
 
 func (s *BybitClientRequest) SetPositionAutoMargin(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/position/set-auto-add-margin",
 		secType:  secTypeSigned,
@@ -115,10 +115,10 @@ func (s *BybitClientRequest) SetPositionAutoMargin(ctx context.Context, opts ...
 }
 
 func (s *BybitClientRequest) UpdatePositionMargin(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/position/add-margin",
 		secType:  secTypeSigned,
@@ -128,10 +128,10 @@ func (s *BybitClientRequest) UpdatePositionMargin(ctx context.Context, opts ...R
 }
 
 func (s *BybitClientRequest) ConfirmPositionRiskLimit(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/position/confirm-pending-mmr",
 		secType:  secTypeSigned,
@@ -141,10 +141,10 @@ func (s *BybitClientRequest) ConfirmPositionRiskLimit(ctx context.Context, opts 
 }
 
 func (s *BybitClientRequest) MovePosition(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/position/move-positions",
 		secType:  secTypeSigned,
@@ -154,10 +154,10 @@ func (s *BybitClientRequest) MovePosition(ctx context.Context, opts ...RequestOp
 }
 
 func (s *BybitClientRequest) GetMovePositionHistory(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/position/move-history",
 		secType:  secTypeSigned,
@@ -167,10 +167,10 @@ func (s *BybitClientRequest) GetMovePositionHistory(ctx context.Context, opts ..
 }
 
 func (s *BybitClientRequest) GetClosePnl(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/position/closed-pnl",
 		secType:  secTypeSigned,
@@ -180,10 +180,10 @@ func (s *BybitClientRequest) GetClosePnl(ctx context.Context, opts ...RequestOpt
 }
 
 func (s *BybitClientRequest) GetOptionClosedPosition(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/position/get-closed-positions",
 		secType:  secTypeSigned,

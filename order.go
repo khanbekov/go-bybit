@@ -171,12 +171,12 @@ func (order *Order) MarketUnit(marketUnit string) *Order {
 }
 
 func (order *Order) Do(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/order/create",
 		secType:  secTypeSigned,
 	}
-	m := params{
+	m := Params{
 		"category":  order.category,
 		"symbol":    order.symbol,
 		"side":      order.side,

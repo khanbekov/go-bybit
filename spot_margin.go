@@ -8,7 +8,7 @@ import (
 )
 
 func (s *BybitClientRequest) GetSpotMarginData(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
 	var endpoint string
@@ -17,7 +17,7 @@ func (s *BybitClientRequest) GetSpotMarginData(ctx context.Context, opts ...Requ
 	} else {
 		endpoint = "/v5/spot-cross-margin-trade/data"
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: endpoint,
 		secType:  secTypeSigned,
@@ -27,10 +27,10 @@ func (s *BybitClientRequest) GetSpotMarginData(ctx context.Context, opts ...Requ
 }
 
 func (s *BybitClientRequest) GetTieredCollateralData(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spot-margin-trade/collateral",
 		secType:  secTypeSigned,
@@ -40,17 +40,17 @@ func (s *BybitClientRequest) GetTieredCollateralData(ctx context.Context, opts .
 }
 
 func (s *BybitClientRequest) GetSpotMarginInterests(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
 	var endpoint string
 	if s.isUta {
 		endpoint = "/v5/spot-margin-trade/interest-rate-history"
 	}
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		endpoint = "/v5/spot-cross-margin-trade/loan-info"
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: endpoint,
 		secType:  secTypeSigned,
@@ -63,15 +63,15 @@ func (s *BybitClientRequest) SetSpotMarginLeverage(ctx context.Context, opts ...
 	if !s.isUta {
 		return nil, errors.New("this function only works for UTA accounts")
 	}
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/spot-margin-trade/set-leverage",
 		secType:  secTypeSigned,
 	}
-	r.setParams(s.params)
+	r.setParams(s.Params)
 	data, err := s.c.callAPI(ctx, r, opts...)
 	if err != nil {
 		return nil, err
@@ -88,15 +88,15 @@ func (s *BybitClientRequest) GetSpotMarginState(ctx context.Context, opts ...Req
 	if !s.isUta {
 		return nil, errors.New("this function only works for UTA accounts")
 	}
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spot-margin-trade/state",
 		secType:  secTypeSigned,
 	}
-	r.setParams(s.params)
+	r.setParams(s.Params)
 	data, err := s.c.callAPI(ctx, r, opts...)
 	if err != nil {
 		return nil, err
@@ -110,7 +110,7 @@ func (s *BybitClientRequest) GetSpotMarginState(ctx context.Context, opts ...Req
 }
 
 func (s *BybitClientRequest) ToggleSpotMarginTrade(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
 	var endpoint string
@@ -119,12 +119,12 @@ func (s *BybitClientRequest) ToggleSpotMarginTrade(ctx context.Context, opts ...
 	} else {
 		endpoint = "/v5/spot-cross-margin-trade/data"
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: endpoint,
 		secType:  secTypeSigned,
 	}
-	r.setParams(s.params)
+	r.setParams(s.Params)
 	data, err := s.c.callAPI(ctx, r, opts...)
 	if err != nil {
 		return nil, err
@@ -142,10 +142,10 @@ func (s *BybitClientRequest) GetSpotMarginCoin(ctx context.Context, opts ...Requ
 	if s.isUta {
 		return nil, errors.New("this function only works for classical accounts")
 	}
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spot-cross-margin-trade/pledge-token",
 		secType:  secTypeSigned,
@@ -159,10 +159,10 @@ func (s *BybitClientRequest) GetSpotMarginBorrowCoin(ctx context.Context, opts .
 	if s.isUta {
 		return nil, errors.New("this function only works for classical accounts")
 	}
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spot-cross-margin-trade/borrow-token",
 		secType:  secTypeSigned,
@@ -176,10 +176,10 @@ func (s *BybitClientRequest) GetSpotMarginLoanAccountInfo(ctx context.Context, o
 	if s.isUta {
 		return nil, errors.New("this function only works for classical accounts")
 	}
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spot-cross-margin-trade/account",
 		secType:  secTypeSigned,
@@ -193,10 +193,10 @@ func (s *BybitClientRequest) GetSpotMarginBorrowOrders(ctx context.Context, opts
 	if s.isUta {
 		return nil, errors.New("this function only works for classical accounts")
 	}
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spot-cross-margin-trade/orders",
 		secType:  secTypeSigned,
@@ -210,10 +210,10 @@ func (s *BybitClientRequest) GetSpotMarginRepaymentOrders(ctx context.Context, o
 	if s.isUta {
 		return nil, errors.New("this function only works for classical accounts")
 	}
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spot-cross-margin-trade/repay-history",
 		secType:  secTypeSigned,
@@ -227,10 +227,10 @@ func (s *BybitClientRequest) BorrowSpotMarginLoan(ctx context.Context, opts ...R
 	if s.isUta {
 		return nil, errors.New("this function only works for classical accounts")
 	}
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/spot-cross-margin-trade/loan",
 		secType:  secTypeSigned,
@@ -244,10 +244,10 @@ func (s *BybitClientRequest) RepaySpotMarginLoan(ctx context.Context, opts ...Re
 	if s.isUta {
 		return nil, errors.New("this function only works for classical accounts")
 	}
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/spot-cross-margin-trade/repay",
 		secType:  secTypeSigned,

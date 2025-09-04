@@ -12,8 +12,8 @@ func main() {
 
 func GetMarketKline() {
 	client := bybit.NewBybitHttpClient("", "", bybit.WithBaseURL(bybit.TESTNET))
-	params := map[string]interface{}{"category": "spot", "symbol": "BTCUSDT", "interval": "1"}
-	serverResult, err := client.NewUtaBybitServiceWithParams(params).GetMarketKline(context.Background())
+	Params := map[string]interface{}{"category": "spot", "symbol": "BTCUSDT", "interval": "1"}
+	serverResult, err := client.NewUtaBybitServiceWithParams(Params).GetMarketKline(context.Background())
 	if err != nil {
 		fmt.Println(err)
 		return

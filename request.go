@@ -15,23 +15,23 @@ const (
 	secTypeSigned         // private request
 )
 
-type params map[string]interface{}
+type Params map[string]interface{}
 
 // request define an API request
-type request struct {
+type Request struct {
 	method     string
 	endpoint   string
 	query      url.Values
 	recvWindow string
 	secType    secType
 	header     http.Header
-	params     []byte
+	Params     []byte
 	fullURL    string
 	body       io.Reader
 }
 
 // addParam add param with key/value to query string
-func (r *request) addParam(key string, value interface{}) *request {
+func (r *Request) addParam(key string, value interface{}) *Request {
 	if r.query == nil {
 		r.query = url.Values{}
 	}
@@ -40,7 +40,7 @@ func (r *request) addParam(key string, value interface{}) *request {
 }
 
 // setParam set param with key/value to query string
-func (r *request) setParam(key string, value interface{}) *request {
+func (r *Request) setParam(key string, value interface{}) *Request {
 	if r.query == nil {
 		r.query = url.Values{}
 	}
@@ -48,8 +48,8 @@ func (r *request) setParam(key string, value interface{}) *request {
 	return r
 }
 
-// setParams set params with key/values to query string or body
-func (r *request) setParams(m params) *request {
+// setParams set Params with key/values to query string or body
+func (r *Request) setParams(m Params) *Request {
 	if r.method == http.MethodGet {
 		for k, v := range m {
 			r.setParam(k, v)
@@ -59,13 +59,13 @@ func (r *request) setParams(m params) *request {
 		if err != nil {
 			log.Fatal(err)
 		}
-		r.params = jsonData
+		r.Params = jsonData
 	}
 
 	return r
 }
 
-func (r *request) validate() (err error) {
+func (r *Request) validate() (err error) {
 	if r.query == nil {
 		r.query = url.Values{}
 	}
@@ -74,10 +74,10 @@ func (r *request) validate() (err error) {
 
 // WithRecvWindow Append `WithRecvWindow(insert_recvWindow)` to request to modify the default recvWindow value
 func WithRecvWindow(recvWindow string) RequestOption {
-	return func(r *request) {
+	return func(r *Request) {
 		r.recvWindow = recvWindow
 	}
 }
 
 // RequestOption define option type for request
-type RequestOption func(*request)
+type RequestOption func(*Request)

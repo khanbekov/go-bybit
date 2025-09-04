@@ -12,8 +12,8 @@ func main() {
 
 func GetHistoryVolatility() {
 	client := bybit.NewBybitHttpClient("", "", bybit.WithBaseURL(bybit.TESTNET), bybit.WithDebug(true))
-	params := map[string]interface{}{"category": "option", "baseCoin": "BTC"}
-	serverResult, err := client.NewUtaBybitServiceWithParams(params).GetHistoryVolatility(context.Background())
+	Params := map[string]interface{}{"category": "option", "baseCoin": "BTC"}
+	serverResult, err := client.NewUtaBybitServiceWithParams(Params).GetHistoryVolatility(context.Background())
 	if err != nil {
 		fmt.Println(err)
 		return

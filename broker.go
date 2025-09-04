@@ -7,10 +7,10 @@ import (
 )
 
 func (s *BybitClientRequest) GetBrokerEarning(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/broker/earnings-info",
 		secType:  secTypeSigned,
@@ -20,10 +20,10 @@ func (s *BybitClientRequest) GetBrokerEarning(ctx context.Context, opts ...Reque
 }
 
 func (s *BybitClientRequest) GetBrokerAccountInfo(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/broker/account-info",
 		secType:  secTypeSigned,
@@ -33,10 +33,10 @@ func (s *BybitClientRequest) GetBrokerAccountInfo(ctx context.Context, opts ...R
 }
 
 func (s *BybitClientRequest) GetAllSubMembersDepositRecords(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/broker/asset/query-sub-member-deposit-record",
 		secType:  secTypeSigned,
@@ -47,10 +47,10 @@ func (s *BybitClientRequest) GetAllSubMembersDepositRecords(ctx context.Context,
 
 // Broker Reward
 func (s *BybitClientRequest) QueryBrokerVoucherSpec(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/broker/award/info",
 		secType:  secTypeSigned,
@@ -60,10 +60,10 @@ func (s *BybitClientRequest) QueryBrokerVoucherSpec(ctx context.Context, opts ..
 }
 
 func (s *BybitClientRequest) DistributeBrokerVoucher(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/broker/award/distribute-award",
 		secType:  secTypeSigned,
@@ -73,10 +73,10 @@ func (s *BybitClientRequest) DistributeBrokerVoucher(ctx context.Context, opts .
 }
 
 func (s *BybitClientRequest) QueryDistributedBrokerVoucher(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/broker/award/distribution-record",
 		secType:  secTypeSigned,

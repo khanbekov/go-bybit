@@ -11,7 +11,7 @@ func main() {
 }
 func PlaceOrderMap() {
 	client := bybit.NewBybitHttpClient("xxxx", "xxx", bybit.WithBaseURL(bybit.TESTNET))
-	params := map[string]interface{}{
+	Params := map[string]interface{}{
 		"category":    "linear",
 		"symbol":      "BTCUSDT",
 		"side":        "Buy",
@@ -21,7 +21,7 @@ func PlaceOrderMap() {
 		"price":       "10000",
 		"timeInForce": "GTC",
 	}
-	orderResult, err := client.NewUtaBybitServiceWithParams(params).PlaceOrder(context.Background())
+	orderResult, err := client.NewUtaBybitServiceWithParams(Params).PlaceOrder(context.Background())
 	if err != nil {
 		fmt.Println(err)
 		return

@@ -8,10 +8,10 @@ import (
 
 // Deprecated: GetLeverageTokenInfo is deprecated.
 func (s *BybitClientRequest) GetLeverageTokenInfo(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spot-lever-token/info",
 		secType:  secTypeSigned,
@@ -22,10 +22,10 @@ func (s *BybitClientRequest) GetLeverageTokenInfo(ctx context.Context, opts ...R
 
 // Deprecated: GetLeverageTokenOrders is deprecated.
 func (s *BybitClientRequest) GetLeverageTokenOrders(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spot-lever-token/order-record",
 		secType:  secTypeSigned,
@@ -36,10 +36,10 @@ func (s *BybitClientRequest) GetLeverageTokenOrders(ctx context.Context, opts ..
 
 // Deprecated: GetLeverageTokenMarket is deprecated.
 func (s *BybitClientRequest) GetLeverageTokenMarket(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/spot-lever-token/reference",
 		secType:  secTypeSigned,
@@ -50,10 +50,10 @@ func (s *BybitClientRequest) GetLeverageTokenMarket(ctx context.Context, opts ..
 
 // Deprecated: PurchaseLeverageToken is deprecated.
 func (s *BybitClientRequest) PurchaseLeverageToken(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/spot-lever-token/purchase",
 		secType:  secTypeSigned,
@@ -64,10 +64,10 @@ func (s *BybitClientRequest) PurchaseLeverageToken(ctx context.Context, opts ...
 
 // Deprecated: RedeemLeverageToken is deprecated.
 func (s *BybitClientRequest) RedeemLeverageToken(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/spot-lever-token/redeem",
 		secType:  secTypeSigned,

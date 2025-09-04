@@ -15,47 +15,47 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type baseTestSuite struct {
+type BaseTestSuite struct {
 	suite.Suite
-	client    *mockedClient
+	Client    *mockedClient
 	apiKey    string
 	apiSecret string
 	baseURL   string
 }
 
-func (s *baseTestSuite) r() *require.Assertions {
+func (s *BaseTestSuite) r() *require.Assertions {
 	return s.Require()
 }
 
-func (s *baseTestSuite) SetupTest() {
+func (s *BaseTestSuite) SetupTest() {
 	s.apiKey = "dummyAPIKey"
 	s.apiSecret = "dummyApiSecret"
 	s.baseURL = "https://dummyapi.com"
-	s.client = newMockedClient(s.apiKey, s.apiSecret, s.baseURL)
+	s.Client = newMockedClient(s.apiKey, s.apiSecret, s.baseURL)
 }
 
-func (s *baseTestSuite) mockDo(data []byte, err error, statusCode ...int) {
-	s.client.Client.do = s.client.do
+func (s *BaseTestSuite) MockDo(data []byte, err error, statusCode ...int) {
+	s.Client.Client.do = s.Client.do
 	code := http.StatusOK
 	if len(statusCode) > 0 {
 		code = statusCode[0]
 	}
-	s.client.On("do", anyHTTPRequest()).Return(newHTTPResponse(data, code), err)
+	s.Client.On("do", anyHTTPRequest()).Return(newHTTPResponse(data, code), err)
 }
 
-func (s *baseTestSuite) assertDo() {
-	s.client.AssertCalled(s.T(), "do", anyHTTPRequest())
+func (s *BaseTestSuite) AssertDo() {
+	s.Client.AssertCalled(s.T(), "do", anyHTTPRequest())
 }
 
-func (s *baseTestSuite) assertReq(f func(r *request)) {
-	s.client.assertReq = f
+func (s *BaseTestSuite) AssertReq(f func(r *Request)) {
+	s.Client.assertReq = f
 }
 
-func (s *baseTestSuite) assertRequestEqual(e, a *request) {
-	s.assertURLValuesEqual(e.query, a.query)
+func (s *BaseTestSuite) AssertRequestEqual(e, a *Request) {
+	s.AssertURLValuesEqual(e.query, a.query)
 }
 
-func (s *baseTestSuite) assertURLValuesEqual(e, a url.Values) {
+func (s *BaseTestSuite) AssertURLValuesEqual(e, a url.Values) {
 	var eKeys, aKeys []string
 	for k := range e {
 		eKeys = append(eKeys, k)
@@ -67,7 +67,7 @@ func (s *baseTestSuite) assertURLValuesEqual(e, a url.Values) {
 	r.Len(aKeys, len(eKeys))
 	for k := range a {
 		switch k {
-		case timestampKey, signatureKey:
+		case "X-BAPI-TIMESTAMP", "X-BAPI-SIGN":
 			r.NotEmpty(a.Get(k))
 			continue
 		}
@@ -79,7 +79,7 @@ func anythingOfType(t string) mock.AnythingOfTypeArgument {
 	return mock.AnythingOfType(t)
 }
 
-func newContext() context.Context {
+func NewContext() context.Context {
 	return context.Background()
 }
 
@@ -94,24 +94,24 @@ func newHTTPResponse(data []byte, statusCode int) *http.Response {
 	}
 }
 
-func newRequest() *request {
-	r := &request{
+func NewRequest() *Request {
+	r := &Request{
 		query: url.Values{},
 	}
 	return r
 }
 
-func newSignedRequest() *request {
-	return newRequest().setParams(params{
-		timestampKey:  "",
-		signatureKey:  "",
-		apiRequestKey: "",
-		recvWindowKey: "5000",
-		signTypeKey:   "2",
+func NewSignedRequest() *Request {
+	return NewRequest().setParams(Params{
+		"X-BAPI-TIMESTAMP":   "",
+		"X-BAPI-SIGN":        "",
+		"X-BAPI-API-KEY":     "",
+		"X-BAPI-RECV-WINDOW": "5000",
+		"X-BAPI-SIGN-TYPE":   "2",
 	})
 }
 
-type assertReqFunc func(r *request)
+type assertReqFunc func(r *Request)
 
 type mockedClient struct {
 	mock.Mock
@@ -127,7 +127,7 @@ func newMockedClient(apiKey, apiSecret, baseURL string) *mockedClient {
 
 func (m *mockedClient) do(req *http.Request) (*http.Response, error) {
 	if m.assertReq != nil {
-		r := newRequest()
+		r := NewRequest()
 		r.query = req.URL.Query()
 		if req.Body != nil && req.ContentLength > 0 {
 			bs := make([]byte, req.ContentLength)

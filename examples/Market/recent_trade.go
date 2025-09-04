@@ -12,8 +12,8 @@ func main() {
 
 func GetRecentTrade() {
 	client := bybit.NewBybitHttpClient("", "", bybit.WithBaseURL(bybit.TESTNET))
-	params := map[string]interface{}{"category": "linear", "symbol": "BTCUSDT"}
-	serverResult, err := client.NewUtaBybitServiceWithParams(params).GetPublicRecentTrades(context.Background())
+	Params := map[string]interface{}{"category": "linear", "symbol": "BTCUSDT"}
+	serverResult, err := client.NewUtaBybitServiceWithParams(Params).GetPublicRecentTrades(context.Background())
 	if err != nil {
 		fmt.Println(err)
 		return

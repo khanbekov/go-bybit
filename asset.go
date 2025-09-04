@@ -7,7 +7,7 @@ import (
 )
 
 func (s *BybitClientRequest) GetAssetOrderRecord(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/exchange/order-record",
 		secType:  secTypeSigned,
@@ -17,7 +17,7 @@ func (s *BybitClientRequest) GetAssetOrderRecord(ctx context.Context, opts ...Re
 }
 
 func (s *BybitClientRequest) GetAssetInfo(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/transfer/query-asset-info",
 		secType:  secTypeSigned,
@@ -27,7 +27,7 @@ func (s *BybitClientRequest) GetAssetInfo(ctx context.Context, opts ...RequestOp
 }
 
 func (s *BybitClientRequest) GetDeliveryRecord(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/delivery-record",
 		secType:  secTypeSigned,
@@ -37,7 +37,7 @@ func (s *BybitClientRequest) GetDeliveryRecord(ctx context.Context, opts ...Requ
 }
 
 func (s *BybitClientRequest) GetUsdcSettlement(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/settlement-record",
 		secType:  secTypeSigned,
@@ -47,7 +47,7 @@ func (s *BybitClientRequest) GetUsdcSettlement(ctx context.Context, opts ...Requ
 }
 
 func (s *BybitClientRequest) GetAllCoinsBalance(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/transfer/query-account-coins-balance",
 		secType:  secTypeSigned,
@@ -57,10 +57,10 @@ func (s *BybitClientRequest) GetAllCoinsBalance(ctx context.Context, opts ...Req
 }
 
 func (s *BybitClientRequest) GetSingleCoinsBalance(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/transfer/query-account-coin-balance",
 		secType:  secTypeSigned,
@@ -70,10 +70,10 @@ func (s *BybitClientRequest) GetSingleCoinsBalance(ctx context.Context, opts ...
 }
 
 func (s *BybitClientRequest) GetTransferableCoin(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/transfer/query-transfer-coin-list",
 		secType:  secTypeSigned,
@@ -83,10 +83,10 @@ func (s *BybitClientRequest) GetTransferableCoin(ctx context.Context, opts ...Re
 }
 
 func (s *BybitClientRequest) CreateInternalTransfer(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/asset/transfer/inter-transfer",
 		secType:  secTypeSigned,
@@ -96,10 +96,10 @@ func (s *BybitClientRequest) CreateInternalTransfer(ctx context.Context, opts ..
 }
 
 func (s *BybitClientRequest) CreateUniversalTransfer(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/asset/transfer/universal-transfer",
 		secType:  secTypeSigned,
@@ -109,10 +109,10 @@ func (s *BybitClientRequest) CreateUniversalTransfer(ctx context.Context, opts .
 }
 
 func (s *BybitClientRequest) SetDepositAccount(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/asset/deposit/deposit-to-account",
 		secType:  secTypeSigned,
@@ -122,10 +122,10 @@ func (s *BybitClientRequest) SetDepositAccount(ctx context.Context, opts ...Requ
 }
 
 func (s *BybitClientRequest) CreateWithdraw(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/asset/withdraw/create",
 		secType:  secTypeSigned,
@@ -135,10 +135,10 @@ func (s *BybitClientRequest) CreateWithdraw(ctx context.Context, opts ...Request
 }
 
 func (s *BybitClientRequest) CancelWithdraw(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/asset/withdraw/cancel",
 		secType:  secTypeSigned,
@@ -148,10 +148,10 @@ func (s *BybitClientRequest) CancelWithdraw(ctx context.Context, opts ...Request
 }
 
 func (s *BybitClientRequest) GetInternalTransferRecords(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/transfer/query-inter-transfer-list",
 		secType:  secTypeSigned,
@@ -161,7 +161,7 @@ func (s *BybitClientRequest) GetInternalTransferRecords(ctx context.Context, opt
 }
 
 func (s *BybitClientRequest) GetUniversalTransferRecords(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/transfer/query-universal-transfer-list",
 		secType:  secTypeSigned,
@@ -171,7 +171,7 @@ func (s *BybitClientRequest) GetUniversalTransferRecords(ctx context.Context, op
 }
 
 func (s *BybitClientRequest) GetSubAccUids(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/transfer/query-sub-member-list",
 		secType:  secTypeSigned,
@@ -181,7 +181,7 @@ func (s *BybitClientRequest) GetSubAccUids(ctx context.Context, opts ...RequestO
 }
 
 func (s *BybitClientRequest) GetAllowedDepositCoin(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/deposit/query-allowed-list",
 		secType:  secTypeSigned,
@@ -191,7 +191,7 @@ func (s *BybitClientRequest) GetAllowedDepositCoin(ctx context.Context, opts ...
 }
 
 func (s *BybitClientRequest) GetDepositRecords(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/deposit/query-record",
 		secType:  secTypeSigned,
@@ -201,7 +201,7 @@ func (s *BybitClientRequest) GetDepositRecords(ctx context.Context, opts ...Requ
 }
 
 func (s *BybitClientRequest) GetSubMemberDepositRecords(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/deposit/query-sub-member-record",
 		secType:  secTypeSigned,
@@ -211,7 +211,7 @@ func (s *BybitClientRequest) GetSubMemberDepositRecords(ctx context.Context, opt
 }
 
 func (s *BybitClientRequest) GetInternalDepositRecords(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/deposit/query-internal-record",
 		secType:  secTypeSigned,
@@ -221,7 +221,7 @@ func (s *BybitClientRequest) GetInternalDepositRecords(ctx context.Context, opts
 }
 
 func (s *BybitClientRequest) GetMasterAccDepositAddress(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/deposit/query-address",
 		secType:  secTypeSigned,
@@ -231,7 +231,7 @@ func (s *BybitClientRequest) GetMasterAccDepositAddress(ctx context.Context, opt
 }
 
 func (s *BybitClientRequest) GetSubAccDepositAddress(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/deposit/query-sub-member-address",
 		secType:  secTypeSigned,
@@ -241,7 +241,7 @@ func (s *BybitClientRequest) GetSubAccDepositAddress(ctx context.Context, opts .
 }
 
 func (s *BybitClientRequest) GetCoinInfo(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/coin/query-info",
 		secType:  secTypeSigned,
@@ -251,7 +251,7 @@ func (s *BybitClientRequest) GetCoinInfo(ctx context.Context, opts ...RequestOpt
 }
 
 func (s *BybitClientRequest) GetWithdrawalAmount(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/withdraw/withdrawable-amount",
 		secType:  secTypeSigned,
@@ -261,7 +261,7 @@ func (s *BybitClientRequest) GetWithdrawalAmount(ctx context.Context, opts ...Re
 }
 
 func (s *BybitClientRequest) GetWithdrawalRecords(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/withdraw/query-record",
 		secType:  secTypeSigned,
@@ -271,7 +271,7 @@ func (s *BybitClientRequest) GetWithdrawalRecords(ctx context.Context, opts ...R
 }
 
 func (s *BybitClientRequest) GetExchangeEntityList(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/withdraw/vasp/list",
 		secType:  secTypeSigned,
@@ -281,7 +281,7 @@ func (s *BybitClientRequest) GetExchangeEntityList(ctx context.Context, opts ...
 }
 
 func (s *BybitClientRequest) GetConvertCoinList(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/exchange/query-coin-list",
 		secType:  secTypeSigned,
@@ -291,7 +291,7 @@ func (s *BybitClientRequest) GetConvertCoinList(ctx context.Context, opts ...Req
 }
 
 func (s *BybitClientRequest) GetConvertStatus(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/exchange/convert-result-query",
 		secType:  secTypeSigned,
@@ -301,7 +301,7 @@ func (s *BybitClientRequest) GetConvertStatus(ctx context.Context, opts ...Reque
 }
 
 func (s *BybitClientRequest) GetConvertHistory(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/asset/exchange/query-convert-history",
 		secType:  secTypeSigned,
@@ -311,7 +311,7 @@ func (s *BybitClientRequest) GetConvertHistory(ctx context.Context, opts ...Requ
 }
 
 func (s *BybitClientRequest) RequestConvertQuote(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/asset/exchange/quote-apply",
 		secType:  secTypeSigned,
@@ -321,7 +321,7 @@ func (s *BybitClientRequest) RequestConvertQuote(ctx context.Context, opts ...Re
 }
 
 func (s *BybitClientRequest) ConfirmConvertQuote(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/asset/exchange/convert-execute",
 		secType:  secTypeSigned,

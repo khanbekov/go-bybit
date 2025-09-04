@@ -40,9 +40,9 @@ const (
 	V3_SPOT_PRIVATE     = "wss://stream.bybit.com/spot/private/v3"
 
 	// Globals
-	timestampKey  = "X-BAPI-TIMESTAMP"
-	signatureKey  = "X-BAPI-SIGN"
-	apiRequestKey = "X-BAPI-API-KEY"
-	recvWindowKey = "X-BAPI-RECV-WINDOW"
-	signTypeKey   = "X-BAPI-SIGN-TYPE"
+	TimestampKey  = "X-BAPI-TIMESTAMP"
+	SignatureKey  = "X-BAPI-SIGN"
+	ApiRequestKey = "X-BAPI-API-KEY"
+	RecvWindowKey = "X-BAPI-RECV-WINDOW"
+	SignTypeKey   = "X-BAPI-SIGN-TYPE"
 )

@@ -8,10 +8,10 @@ import (
 )
 
 func (s *BybitClientRequest) PlacePreCheckOrder(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/order/pre-check",
 		secType:  secTypeSigned,
@@ -21,10 +21,10 @@ func (s *BybitClientRequest) PlacePreCheckOrder(ctx context.Context, opts ...Req
 }
 
 func (s *BybitClientRequest) PlaceOrder(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/order/create",
 		secType:  secTypeSigned,
@@ -34,10 +34,10 @@ func (s *BybitClientRequest) PlaceOrder(ctx context.Context, opts ...RequestOpti
 }
 
 func (s *BybitClientRequest) AmendOrder(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/order/amend",
 		secType:  secTypeSigned,
@@ -47,10 +47,10 @@ func (s *BybitClientRequest) AmendOrder(ctx context.Context, opts ...RequestOpti
 }
 
 func (s *BybitClientRequest) CancelOrder(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/order/cancel",
 		secType:  secTypeSigned,
@@ -60,10 +60,10 @@ func (s *BybitClientRequest) CancelOrder(ctx context.Context, opts ...RequestOpt
 }
 
 func (s *BybitClientRequest) GetOpenOrders(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/order/realtime",
 		secType:  secTypeSigned,
@@ -73,10 +73,10 @@ func (s *BybitClientRequest) GetOpenOrders(ctx context.Context, opts ...RequestO
 }
 
 func (s *BybitClientRequest) GetOrderHistory(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/order/history",
 		secType:  secTypeSigned,
@@ -86,10 +86,10 @@ func (s *BybitClientRequest) GetOrderHistory(ctx context.Context, opts ...Reques
 }
 
 func (s *BybitClientRequest) GetSpotBorrowQuota(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/order/spot-borrow-check",
 		secType:  secTypeSigned,
@@ -99,10 +99,10 @@ func (s *BybitClientRequest) GetSpotBorrowQuota(ctx context.Context, opts ...Req
 }
 
 func (s *BybitClientRequest) CancelAllOrders(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/order/cancel-all",
 		secType:  secTypeSigned,
@@ -112,10 +112,10 @@ func (s *BybitClientRequest) CancelAllOrders(ctx context.Context, opts ...Reques
 }
 
 func (s *BybitClientRequest) SetDisconnectCancelAll(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/order/disconnected-cancel-all",
 		secType:  secTypeSigned,
@@ -125,10 +125,10 @@ func (s *BybitClientRequest) SetDisconnectCancelAll(ctx context.Context, opts ..
 }
 
 func (s *BybitClientRequest) PlaceBatchOrder(ctx context.Context, opts ...RequestOption) (res *models.BatchOrderServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/order/create-batch",
 		secType:  secTypeSigned,
@@ -138,10 +138,10 @@ func (s *BybitClientRequest) PlaceBatchOrder(ctx context.Context, opts ...Reques
 }
 
 func (s *BybitClientRequest) AmendBatchOrder(ctx context.Context, opts ...RequestOption) (res *models.BatchOrderServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/order/amend-batch",
 		secType:  secTypeSigned,
@@ -151,10 +151,10 @@ func (s *BybitClientRequest) AmendBatchOrder(ctx context.Context, opts ...Reques
 }
 
 func (s *BybitClientRequest) CancelBatchOrder(ctx context.Context, opts ...RequestOption) (res *models.BatchOrderServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodPost,
 		endpoint: "/v5/order/cancel-batch",
 		secType:  secTypeSigned,
@@ -164,10 +164,10 @@ func (s *BybitClientRequest) CancelBatchOrder(ctx context.Context, opts ...Reque
 }
 
 func (s *BybitClientRequest) GetTradeHistory(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/execution/list",
 		secType:  secTypeSigned,
@@ -177,10 +177,10 @@ func (s *BybitClientRequest) GetTradeHistory(ctx context.Context, opts ...Reques
 }
 
 func (s *BybitClientRequest) RequestTestFund(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
-	if err = handlers.ValidateParams(s.params); err != nil {
+	if err = handlers.ValidateParams(s.Params); err != nil {
 		return nil, err
 	}
-	r := &request{
+	r := &Request{
 		method:   http.MethodGet,
 		endpoint: "/v5/account/demo-apply-money",
 		secType:  secTypeSigned,

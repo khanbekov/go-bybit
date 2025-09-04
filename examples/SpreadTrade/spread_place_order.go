@@ -11,7 +11,7 @@ func main() {
 }
 func SpreadTradeOrderMap() {
 	client := bybit.NewBybitHttpClient("YOUR_API_KEY", "YOUR_API_SECRET", bybit.WithBaseURL(bybit.TESTNET))
-	params := map[string]interface{}{
+	Params := map[string]interface{}{
 		"symbol":      "SOLUSDT_SOL/USDT",
 		"side":        "Buy",
 		"orderType":   "Limit",
@@ -20,7 +20,7 @@ func SpreadTradeOrderMap() {
 		"orderLinkId": "1744072052193428479",
 		"timeInForce": "PostOnly",
 	}
-	orderResult, err := client.NewUtaBybitServiceWithParams(params).PlaceSpreadTradeOrder(context.Background())
+	orderResult, err := client.NewUtaBybitServiceWithParams(Params).PlaceSpreadTradeOrder(context.Background())
 	if err != nil {
 		fmt.Println(err)
 		return

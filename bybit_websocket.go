@@ -6,10 +6,12 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
+	"github.com/rs/zerolog"
 )
 
 type MessageHandler func(message string) error
@@ -18,7 +20,7 @@ func (b *WebSocket) handleIncomingMessages() {
 	for {
 		_, message, err := b.conn.ReadMessage()
 		if err != nil {
-			fmt.Println("Error reading:", err)
+			b.logger.Debug().Err(err).Msg("Error reading WebSocket message")
 			b.isConnected = false
 			return
 		}
@@ -26,7 +28,7 @@ func (b *WebSocket) handleIncomingMessages() {
 		if b.onMessage != nil {
 			err := b.onMessage(string(message))
 			if err != nil {
-				fmt.Println("Error handling message:", err)
+				b.logger.Debug().Err(err).Str("message", string(message)).Msg("Error handling WebSocket message")
 				return
 			}
 		}
@@ -40,10 +42,10 @@ func (b *WebSocket) monitorConnection() {
 	for {
 		<-ticker.C
 		if !b.isConnected && b.ctx.Err() == nil { // Check if disconnected and context not done
-			fmt.Println("Attempting to reconnect...")
+			b.logger.Debug().Msg("Attempting to reconnect WebSocket")
 			con := b.Connect() // Example, adjust parameters as needed
 			if con == nil {
-				fmt.Println("Reconnection failed:")
+				b.logger.Debug().Msg("WebSocket reconnection failed")
 			} else {
 				b.isConnected = true
 				go b.handleIncomingMessages() // Restart message handling
@@ -73,6 +75,7 @@ type WebSocket struct {
 	ctx          context.Context
 	cancel       context.CancelFunc
 	isConnected  bool
+	logger       zerolog.Logger
 }
 
 type WebsocketOption func(*WebSocket)
@@ -97,6 +100,7 @@ func NewBybitPrivateWebSocket(url, apiKey, apiSecret string, handler MessageHand
 		maxAliveTime: "",
 		pingInterval: 20,
 		onMessage:    handler,
+		logger:       zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger(),
 	}
 
 	// Apply the provided options
@@ -112,6 +116,7 @@ func NewBybitPublicWebSocket(url string, handler MessageHandler) *WebSocket {
 		url:          url,
 		pingInterval: 20, // default is 20 seconds
 		onMessage:    handler,
+		logger:       zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger(),
 	}
 
 	return c
@@ -127,7 +132,7 @@ func (b *WebSocket) Connect() *WebSocket {
 
 	if b.requiresAuthentication() {
 		if err = b.sendAuth(); err != nil {
-			fmt.Println("Failed Connection:", fmt.Sprintf("%v", err))
+			b.logger.Debug().Err(err).Msg("Failed WebSocket authentication")
 			return nil
 		}
 	}
@@ -149,12 +154,12 @@ func (b *WebSocket) SendSubscription(args []string) (*WebSocket, error) {
 		"op":     "subscribe",
 		"args":   args,
 	}
-	fmt.Println("subscribe msg:", fmt.Sprintf("%v", subMessage["args"]))
+	b.logger.Debug().Interface("args", subMessage["args"]).Msg("Sending WebSocket subscription")
 	if err := b.sendAsJson(subMessage); err != nil {
-		fmt.Println("Failed to send subscription:", err)
+		b.logger.Debug().Err(err).Msg("Failed to send WebSocket subscription")
 		return b, err
 	}
-	fmt.Println("Subscription sent successfully.")
+	b.logger.Debug().Msg("WebSocket subscription sent successfully")
 	return b, nil
 }
 
@@ -171,32 +176,28 @@ func (b *WebSocket) SendRequest(op string, args map[string]interface{}, headers 
 		"op":     op,
 		"args":   []interface{}{args},
 	}
-	fmt.Println("request headers:", fmt.Sprintf("%v", request["header"]))
-	fmt.Println("request op channel:", fmt.Sprintf("%v", request["op"]))
-	fmt.Println("request msg:", fmt.Sprintf("%v", request["args"]))
+	b.logger.Debug().Interface("headers", request["header"]).Str("op", fmt.Sprintf("%v", request["op"])).Interface("args", request["args"]).Msg("Sending WebSocket request")
 	if err := b.sendAsJson(request); err != nil {
-		fmt.Println("Failed to send websocket trade request:", err)
+		b.logger.Debug().Err(err).Msg("Failed to send WebSocket trade request")
 		return b, err
 	}
-	fmt.Println("Successfully sent websocket trade request.")
+	b.logger.Debug().Msg("Successfully sent WebSocket trade request")
 	return b, nil
 }
 
 func (b *WebSocket) SendTradeRequest(tradeTruest map[string]interface{}) (*WebSocket, error) {
-	fmt.Println("trade request headers:", fmt.Sprintf("%v", tradeTruest["header"]))
-	fmt.Println("trade request op channel:", fmt.Sprintf("%v", tradeTruest["op"]))
-	fmt.Println("trade request msg:", fmt.Sprintf("%v", tradeTruest["args"]))
+	b.logger.Debug().Interface("headers", tradeTruest["header"]).Str("op", fmt.Sprintf("%v", tradeTruest["op"])).Interface("args", tradeTruest["args"]).Msg("Sending WebSocket trade request")
 	if err := b.sendAsJson(tradeTruest); err != nil {
-		fmt.Println("Failed to send websocket trade request:", err)
+		b.logger.Debug().Err(err).Msg("Failed to send WebSocket trade request")
 		return b, err
 	}
-	fmt.Println("Successfully sent websocket trade request.")
+	b.logger.Debug().Msg("Successfully sent WebSocket trade request")
 	return b, nil
 }
 
 func ping(b *WebSocket) {
 	if b.pingInterval <= 0 {
-		fmt.Println("Ping interval is set to a non-positive value.")
+		b.logger.Debug().Int("pingInterval", b.pingInterval).Msg("Ping interval is set to a non-positive value")
 		return
 	}
 
@@ -213,17 +214,17 @@ func ping(b *WebSocket) {
 			}
 			jsonPingMessage, err := json.Marshal(pingMessage)
 			if err != nil {
-				fmt.Println("Failed to marshal ping message:", err)
+				b.logger.Debug().Err(err).Msg("Failed to marshal ping message")
 				continue
 			}
 			if err := b.conn.WriteMessage(websocket.TextMessage, jsonPingMessage); err != nil {
-				fmt.Println("Failed to send ping:", err)
+				b.logger.Debug().Err(err).Msg("Failed to send WebSocket ping")
 				return
 			}
-			fmt.Println("Ping sent with UTC time:", currentTime)
+			b.logger.Debug().Int64("timestamp", currentTime).Msg("WebSocket ping sent")
 
 		case <-b.ctx.Done():
-			fmt.Println("Ping context closed, stopping ping.")
+			b.logger.Debug().Msg("WebSocket ping context closed, stopping ping")
 			return
 		}
 	}
@@ -257,14 +258,14 @@ func (b *WebSocket) sendAuth() error {
 
 	// Convert to hexadecimal instead of base64
 	signature := hex.EncodeToString(h.Sum(nil))
-	fmt.Println("signature generated : " + signature)
+	b.logger.Debug().Str("signature", signature).Msg("Generated WebSocket authentication signature")
 
 	authMessage := map[string]interface{}{
 		"req_id": uuid.New(),
 		"op":     "auth",
 		"args":   []interface{}{b.apiKey, expires, signature},
 	}
-	fmt.Println("auth args:", fmt.Sprintf("%v", authMessage["args"]))
+	b.logger.Debug().Interface("args", authMessage["args"]).Msg("Sending WebSocket authentication")
 	return b.sendAsJson(authMessage)
 }
 

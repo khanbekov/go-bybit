@@ -20,7 +20,7 @@ func (b *WebSocket) handleIncomingMessages() {
 	for {
 		_, message, err := b.conn.ReadMessage()
 		if err != nil {
-			b.logger.Debug().Err(err).Msg("Error reading WebSocket message")
+			b.logger.Warn().Err(err).Msg("Error reading WebSocket message")
 			b.isConnected = false
 			return
 		}
@@ -28,7 +28,7 @@ func (b *WebSocket) handleIncomingMessages() {
 		if b.onMessage != nil {
 			err := b.onMessage(string(message))
 			if err != nil {
-				b.logger.Debug().Err(err).Str("message", string(message)).Msg("Error handling WebSocket message")
+				b.logger.Warn().Err(err).Str("message", string(message)).Msg("Error handling WebSocket message")
 				return
 			}
 		}
@@ -45,7 +45,7 @@ func (b *WebSocket) monitorConnection() {
 			b.logger.Debug().Msg("Attempting to reconnect WebSocket")
 			con := b.Connect() // Example, adjust parameters as needed
 			if con == nil {
-				b.logger.Debug().Msg("WebSocket reconnection failed")
+				b.logger.Warn().Msg("WebSocket reconnection failed")
 			} else {
 				b.isConnected = true
 				go b.handleIncomingMessages() // Restart message handling
@@ -62,6 +62,10 @@ func (b *WebSocket) monitorConnection() {
 
 func (b *WebSocket) SetMessageHandler(handler MessageHandler) {
 	b.onMessage = handler
+}
+
+func (b *WebSocket) SetLogLevel(level zerolog.Level) {
+	b.logger = b.logger.Level(level)
 }
 
 type WebSocket struct {
@@ -89,6 +93,12 @@ func WithPingInterval(pingInterval int) WebsocketOption {
 func WithMaxAliveTime(maxAliveTime string) WebsocketOption {
 	return func(c *WebSocket) {
 		c.maxAliveTime = maxAliveTime
+	}
+}
+
+func WithLogLevel(level zerolog.Level) WebsocketOption {
+	return func(c *WebSocket) {
+		c.logger = c.logger.Level(level)
 	}
 }
 
@@ -132,7 +142,7 @@ func (b *WebSocket) Connect() *WebSocket {
 
 	if b.requiresAuthentication() {
 		if err = b.sendAuth(); err != nil {
-			b.logger.Debug().Err(err).Msg("Failed WebSocket authentication")
+			b.logger.Warn().Err(err).Msg("Failed WebSocket authentication")
 			return nil
 		}
 	}
@@ -156,7 +166,7 @@ func (b *WebSocket) SendSubscription(args []string) (*WebSocket, error) {
 	}
 	b.logger.Debug().Interface("args", subMessage["args"]).Msg("Sending WebSocket subscription")
 	if err := b.sendAsJson(subMessage); err != nil {
-		b.logger.Debug().Err(err).Msg("Failed to send WebSocket subscription")
+		b.logger.Warn().Err(err).Msg("Failed to send WebSocket subscription")
 		return b, err
 	}
 	b.logger.Debug().Msg("WebSocket subscription sent successfully")
@@ -178,7 +188,7 @@ func (b *WebSocket) SendRequest(op string, args map[string]interface{}, headers 
 	}
 	b.logger.Debug().Interface("headers", request["header"]).Str("op", fmt.Sprintf("%v", request["op"])).Interface("args", request["args"]).Msg("Sending WebSocket request")
 	if err := b.sendAsJson(request); err != nil {
-		b.logger.Debug().Err(err).Msg("Failed to send WebSocket trade request")
+		b.logger.Warn().Err(err).Msg("Failed to send WebSocket trade request")
 		return b, err
 	}
 	b.logger.Debug().Msg("Successfully sent WebSocket trade request")
@@ -188,7 +198,7 @@ func (b *WebSocket) SendRequest(op string, args map[string]interface{}, headers 
 func (b *WebSocket) SendTradeRequest(tradeTruest map[string]interface{}) (*WebSocket, error) {
 	b.logger.Debug().Interface("headers", tradeTruest["header"]).Str("op", fmt.Sprintf("%v", tradeTruest["op"])).Interface("args", tradeTruest["args"]).Msg("Sending WebSocket trade request")
 	if err := b.sendAsJson(tradeTruest); err != nil {
-		b.logger.Debug().Err(err).Msg("Failed to send WebSocket trade request")
+		b.logger.Warn().Err(err).Msg("Failed to send WebSocket trade request")
 		return b, err
 	}
 	b.logger.Debug().Msg("Successfully sent WebSocket trade request")
@@ -214,11 +224,11 @@ func ping(b *WebSocket) {
 			}
 			jsonPingMessage, err := json.Marshal(pingMessage)
 			if err != nil {
-				b.logger.Debug().Err(err).Msg("Failed to marshal ping message")
+				b.logger.Warn().Err(err).Msg("Failed to marshal ping message")
 				continue
 			}
 			if err := b.conn.WriteMessage(websocket.TextMessage, jsonPingMessage); err != nil {
-				b.logger.Debug().Err(err).Msg("Failed to send WebSocket ping")
+				b.logger.Warn().Err(err).Msg("Failed to send WebSocket ping")
 				return
 			}
 			b.logger.Debug().Int64("timestamp", currentTime).Msg("WebSocket ping sent")

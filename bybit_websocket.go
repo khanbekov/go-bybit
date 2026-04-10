@@ -5,8 +5,10 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -16,70 +18,39 @@ import (
 
 type MessageHandler func(message string) error
 
-func (b *WebSocket) handleIncomingMessages() {
-	for {
-		_, message, err := b.conn.ReadMessage()
-		if err != nil {
-			b.logger.Warn().Err(err).Msg("Error reading WebSocket message")
-			b.isConnected = false
-			return
-		}
-
-		if b.onMessage != nil {
-			err := b.onMessage(string(message))
-			if err != nil {
-				b.logger.Warn().Err(err).Str("message", string(message)).Msg("Error handling WebSocket message")
-				return
-			}
-		}
-	}
-}
-
-func (b *WebSocket) monitorConnection() {
-	ticker := time.NewTicker(time.Second * 5) // Check every 5 seconds
-	defer ticker.Stop()
-
-	for {
-		<-ticker.C
-		if !b.isConnected && b.ctx.Err() == nil { // Check if disconnected and context not done
-			b.logger.Debug().Msg("Attempting to reconnect WebSocket")
-			con := b.Connect() // Example, adjust parameters as needed
-			if con == nil {
-				b.logger.Warn().Msg("WebSocket reconnection failed")
-			} else {
-				b.isConnected = true
-				go b.handleIncomingMessages() // Restart message handling
-			}
-		}
-
-		select {
-		case <-b.ctx.Done():
-			return // Stop the routine if context is done
-		default:
-		}
-	}
-}
-
-func (b *WebSocket) SetMessageHandler(handler MessageHandler) {
-	b.onMessage = handler
-}
-
-func (b *WebSocket) SetLogLevel(level zerolog.Level) {
-	b.logger = b.logger.Level(level)
-}
-
+// WebSocket is a Bybit V5 websocket client. After construction, call
+// Connect once; the client owns one read goroutine and one ping goroutine
+// for its entire lifetime, transparently re-dialing on read errors.
+// Call Disconnect to stop both and release the underlying connection.
+//
+// All exported methods are safe to call from multiple goroutines.
 type WebSocket struct {
-	conn         *websocket.Conn
+	// Immutable after construction.
 	url          string
 	apiKey       string
 	apiSecret    string
 	maxAliveTime string
 	pingInterval int
 	onMessage    MessageHandler
-	ctx          context.Context
-	cancel       context.CancelFunc
-	isConnected  bool
 	logger       zerolog.Logger
+
+	// Lifecycle. ctx/cancel are created in the constructor so background
+	// goroutines never observe a nil context.
+	ctx    context.Context
+	cancel context.CancelFunc
+	wg     sync.WaitGroup
+
+	// mu protects conn, isConnected, started, closed.
+	mu          sync.Mutex
+	conn        *websocket.Conn
+	isConnected bool
+	started     bool
+	closed      bool
+
+	// writeMu serialises WriteMessage calls. gorilla/websocket only
+	// supports a single concurrent writer, but ping and user code may
+	// both want to send.
+	writeMu sync.Mutex
 }
 
 type WebsocketOption func(*WebSocket)
@@ -103,58 +74,254 @@ func WithLogLevel(level zerolog.Level) WebsocketOption {
 }
 
 func NewBybitPrivateWebSocket(url, apiKey, apiSecret string, handler MessageHandler, options ...WebsocketOption) *WebSocket {
+	ctx, cancel := context.WithCancel(context.Background())
 	c := &WebSocket{
 		url:          url,
 		apiKey:       apiKey,
 		apiSecret:    apiSecret,
-		maxAliveTime: "",
 		pingInterval: 20,
 		onMessage:    handler,
 		logger:       zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger(),
+		ctx:          ctx,
+		cancel:       cancel,
 	}
-
-	// Apply the provided options
 	for _, opt := range options {
 		opt(c)
 	}
-
 	return c
 }
 
 func NewBybitPublicWebSocket(url string, handler MessageHandler) *WebSocket {
-	c := &WebSocket{
+	ctx, cancel := context.WithCancel(context.Background())
+	return &WebSocket{
 		url:          url,
-		pingInterval: 20, // default is 20 seconds
+		pingInterval: 20,
 		onMessage:    handler,
 		logger:       zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger(),
+		ctx:          ctx,
+		cancel:       cancel,
 	}
-
-	return c
 }
 
-func (b *WebSocket) Connect() *WebSocket {
-	var err error
-	wssUrl := b.url
-	if b.maxAliveTime != "" {
-		wssUrl += "?max_alive_time=" + b.maxAliveTime
+func (b *WebSocket) SetMessageHandler(handler MessageHandler) {
+	b.onMessage = handler
+}
+
+func (b *WebSocket) SetLogLevel(level zerolog.Level) {
+	b.logger = b.logger.Level(level)
+}
+
+// Connect dials the underlying websocket and starts the read and ping
+// goroutines. It is idempotent: subsequent calls on a running client are
+// no-ops, calls on a closed client return an error. The first dial must
+// succeed; subsequent reconnects are handled transparently by the read
+// loop with exponential backoff.
+func (b *WebSocket) Connect() error {
+	b.mu.Lock()
+	if b.closed {
+		b.mu.Unlock()
+		return errors.New("bybit_connector: websocket is closed")
 	}
-	b.conn, _, err = websocket.DefaultDialer.Dial(wssUrl, nil)
+	if b.started {
+		b.mu.Unlock()
+		return nil
+	}
+	b.started = true
+	b.mu.Unlock()
+
+	if err := b.dial(); err != nil {
+		b.mu.Lock()
+		b.started = false
+		b.mu.Unlock()
+		return err
+	}
+
+	b.wg.Add(2)
+	go b.readLoop()
+	go b.pingLoop()
+	return nil
+}
+
+// dial performs a single dial+auth cycle. On failure the connection is
+// closed and isConnected stays false; on success the new conn is stored
+// under the lock.
+func (b *WebSocket) dial() error {
+	wssURL := b.url
+	if b.maxAliveTime != "" {
+		wssURL += "?max_alive_time=" + b.maxAliveTime
+	}
+
+	conn, _, err := websocket.DefaultDialer.Dial(wssURL, nil)
+	if err != nil {
+		return fmt.Errorf("bybit_connector: websocket dial: %w", err)
+	}
+
+	b.mu.Lock()
+	b.conn = conn
+	b.isConnected = true
+	b.mu.Unlock()
 
 	if b.requiresAuthentication() {
-		if err = b.sendAuth(); err != nil {
-			b.logger.Warn().Err(err).Msg("Failed WebSocket authentication")
-			return nil
+		if err := b.sendAuth(); err != nil {
+			b.mu.Lock()
+			_ = conn.Close()
+			b.conn = nil
+			b.isConnected = false
+			b.mu.Unlock()
+			return fmt.Errorf("bybit_connector: websocket auth: %w", err)
 		}
 	}
-	b.isConnected = true
 
-	go b.handleIncomingMessages()
-	go b.monitorConnection()
+	b.logger.Debug().Str("url", b.url).Msg("WebSocket connected")
+	return nil
+}
 
-	b.ctx, b.cancel = context.WithCancel(context.Background())
-	go ping(b)
+// readLoop owns the gorilla websocket reader. On read errors it closes
+// the conn, marks the client disconnected, and re-dials with exponential
+// backoff capped at 30s. It exits only when the context is cancelled.
+func (b *WebSocket) readLoop() {
+	defer b.wg.Done()
 
-	return b
+	const (
+		initialBackoff = time.Second
+		maxBackoff     = 30 * time.Second
+	)
+	backoff := initialBackoff
+
+	for {
+		if b.ctx.Err() != nil {
+			return
+		}
+
+		b.mu.Lock()
+		conn := b.conn
+		connected := b.isConnected
+		b.mu.Unlock()
+
+		if !connected || conn == nil {
+			select {
+			case <-b.ctx.Done():
+				return
+			case <-time.After(backoff):
+			}
+			if err := b.dial(); err != nil {
+				b.logger.Warn().Err(err).Dur("backoff", backoff).Msg("WebSocket reconnect failed")
+				if backoff < maxBackoff {
+					backoff *= 2
+					if backoff > maxBackoff {
+						backoff = maxBackoff
+					}
+				}
+				continue
+			}
+			backoff = initialBackoff
+			continue
+		}
+
+		_, message, err := conn.ReadMessage()
+		if err != nil {
+			if b.ctx.Err() != nil {
+				return
+			}
+			b.logger.Warn().Err(err).Msg("WebSocket read error, will reconnect")
+			b.mu.Lock()
+			if b.conn == conn {
+				_ = conn.Close()
+				b.conn = nil
+				b.isConnected = false
+			}
+			b.mu.Unlock()
+			continue
+		}
+
+		if b.onMessage != nil {
+			if herr := b.onMessage(string(message)); herr != nil {
+				b.logger.Warn().Err(herr).Msg("WebSocket message handler returned error (continuing)")
+			}
+		}
+	}
+}
+
+// pingLoop sends an application-level ping every pingInterval seconds.
+// On send failure it nudges the read loop to reconnect by closing the
+// current conn under the lock.
+func (b *WebSocket) pingLoop() {
+	defer b.wg.Done()
+
+	if b.pingInterval <= 0 {
+		b.logger.Debug().Int("pingInterval", b.pingInterval).Msg("Ping interval non-positive, ping loop disabled")
+		return
+	}
+	ticker := time.NewTicker(time.Duration(b.pingInterval) * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-b.ctx.Done():
+			return
+		case <-ticker.C:
+		}
+
+		b.mu.Lock()
+		connected := b.isConnected
+		b.mu.Unlock()
+		if !connected {
+			continue
+		}
+
+		now := time.Now().Unix()
+		pingMessage := map[string]string{
+			"op":     "ping",
+			"req_id": fmt.Sprintf("%d", now),
+		}
+		data, err := json.Marshal(pingMessage)
+		if err != nil {
+			b.logger.Warn().Err(err).Msg("Failed to marshal ping message")
+			continue
+		}
+		if err := b.send(string(data)); err != nil {
+			b.logger.Warn().Err(err).Msg("Failed to send WebSocket ping")
+			b.mu.Lock()
+			if b.conn != nil {
+				_ = b.conn.Close()
+				b.conn = nil
+				b.isConnected = false
+			}
+			b.mu.Unlock()
+			continue
+		}
+		b.logger.Debug().Int64("timestamp", now).Msg("WebSocket ping sent")
+	}
+}
+
+// Disconnect cancels the lifetime context, closes the current
+// connection, and waits for the read and ping goroutines to exit. It is
+// safe to call before Connect, after a failed Connect, or multiple times.
+func (b *WebSocket) Disconnect() error {
+	b.mu.Lock()
+	if b.closed {
+		b.mu.Unlock()
+		return nil
+	}
+	b.closed = true
+	cancel := b.cancel
+	conn := b.conn
+	wasStarted := b.started
+	b.conn = nil
+	b.isConnected = false
+	b.mu.Unlock()
+
+	if cancel != nil {
+		cancel()
+	}
+	var err error
+	if conn != nil {
+		err = conn.Close()
+	}
+	if wasStarted {
+		b.wg.Wait()
+	}
+	return err
 }
 
 func (b *WebSocket) SendSubscription(args []string) (*WebSocket, error) {
@@ -164,12 +331,11 @@ func (b *WebSocket) SendSubscription(args []string) (*WebSocket, error) {
 		"op":     "subscribe",
 		"args":   args,
 	}
-	b.logger.Debug().Interface("args", subMessage["args"]).Msg("Sending WebSocket subscription")
+	b.logger.Debug().Str("req_id", reqID).Msg("Sending WebSocket subscription")
 	if err := b.sendAsJson(subMessage); err != nil {
 		b.logger.Warn().Err(err).Msg("Failed to send WebSocket subscription")
 		return b, err
 	}
-	b.logger.Debug().Msg("WebSocket subscription sent successfully")
 	return b, nil
 }
 
@@ -194,7 +360,7 @@ func (b *WebSocket) SubscribeKline(interval KlineInterval, symbols ...string) (*
 	return b.SendSubscription(topics)
 }
 
-// SendRequest sendRequest sends a custom request over the WebSocket connection.
+// SendRequest sends a custom request over the WebSocket connection.
 func (b *WebSocket) SendRequest(op string, args map[string]interface{}, headers map[string]string, reqId ...string) (*WebSocket, error) {
 	finalReqId := uuid.New().String()
 	if len(reqId) > 0 && reqId[0] != "" {
@@ -207,12 +373,11 @@ func (b *WebSocket) SendRequest(op string, args map[string]interface{}, headers 
 		"op":     op,
 		"args":   []interface{}{args},
 	}
-	b.logger.Debug().Interface("headers", request["header"]).Str("op", fmt.Sprintf("%v", request["op"])).Interface("args", request["args"]).Msg("Sending WebSocket request")
+	b.logger.Debug().Str("req_id", finalReqId).Str("op", op).Msg("Sending WebSocket request")
 	if err := b.sendAsJson(request); err != nil {
-		b.logger.Warn().Err(err).Msg("Failed to send WebSocket trade request")
+		b.logger.Warn().Err(err).Msg("Failed to send WebSocket request")
 		return b, err
 	}
-	b.logger.Debug().Msg("Successfully sent WebSocket trade request")
 	return b, nil
 }
 
@@ -222,49 +387,7 @@ func (b *WebSocket) SendTradeRequest(tradeRequest map[string]interface{}) (*WebS
 		b.logger.Warn().Err(err).Msg("Failed to send WebSocket trade request")
 		return b, err
 	}
-	b.logger.Debug().Msg("Successfully sent WebSocket trade request")
 	return b, nil
-}
-
-func ping(b *WebSocket) {
-	if b.pingInterval <= 0 {
-		b.logger.Debug().Int("pingInterval", b.pingInterval).Msg("Ping interval is set to a non-positive value")
-		return
-	}
-
-	ticker := time.NewTicker(time.Duration(b.pingInterval) * time.Second)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-ticker.C:
-			currentTime := time.Now().Unix()
-			pingMessage := map[string]string{
-				"op":     "ping",
-				"req_id": fmt.Sprintf("%d", currentTime),
-			}
-			jsonPingMessage, err := json.Marshal(pingMessage)
-			if err != nil {
-				b.logger.Warn().Err(err).Msg("Failed to marshal ping message")
-				continue
-			}
-			if err := b.conn.WriteMessage(websocket.TextMessage, jsonPingMessage); err != nil {
-				b.logger.Warn().Err(err).Msg("Failed to send WebSocket ping")
-				return
-			}
-			b.logger.Debug().Int64("timestamp", currentTime).Msg("WebSocket ping sent")
-
-		case <-b.ctx.Done():
-			b.logger.Debug().Msg("WebSocket ping context closed, stopping ping")
-			return
-		}
-	}
-}
-
-func (b *WebSocket) Disconnect() error {
-	b.cancel()
-	b.isConnected = false
-	return b.conn.Close()
 }
 
 func (b *WebSocket) requiresAuthentication() bool {
@@ -274,14 +397,11 @@ func (b *WebSocket) requiresAuthentication() bool {
 }
 
 func (b *WebSocket) sendAuth() error {
-	// Get current Unix time in milliseconds
 	expires := time.Now().UnixNano()/1e6 + 10000
 	val := fmt.Sprintf("GET/realtime%d", expires)
 
 	h := hmac.New(sha256.New, []byte(b.apiSecret))
 	h.Write([]byte(val))
-
-	// Convert to hexadecimal instead of base64
 	signature := hex.EncodeToString(h.Sum(nil))
 	reqID := uuid.New().String()
 	b.logger.Debug().Str("req_id", reqID).Int64("expires", expires).Msg("Sending WebSocket authentication")
@@ -302,6 +422,17 @@ func (b *WebSocket) sendAsJson(v interface{}) error {
 	return b.send(string(data))
 }
 
+// send serialises WriteMessage calls and returns an error rather than
+// panicking when the connection is currently absent.
 func (b *WebSocket) send(message string) error {
-	return b.conn.WriteMessage(websocket.TextMessage, []byte(message))
+	b.mu.Lock()
+	conn := b.conn
+	b.mu.Unlock()
+	if conn == nil {
+		return errors.New("bybit_connector: websocket not connected")
+	}
+
+	b.writeMu.Lock()
+	defer b.writeMu.Unlock()
+	return conn.WriteMessage(websocket.TextMessage, []byte(message))
 }

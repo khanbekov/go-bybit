@@ -46,3 +46,51 @@ func TestSubscribeKline_RejectsEmptySymbol(t *testing.T) {
 		t.Fatalf("expected empty-symbol error, got %v", err)
 	}
 }
+
+func TestWebSocket_DisconnectBeforeConnect_NoPanic(t *testing.T) {
+	ws := NewBybitPublicWebSocket("wss://example.invalid", nil)
+	if err := ws.Disconnect(); err != nil {
+		t.Fatalf("Disconnect on fresh client should not error, got %v", err)
+	}
+}
+
+func TestWebSocket_DisconnectIsIdempotent(t *testing.T) {
+	ws := NewBybitPublicWebSocket("wss://example.invalid", nil)
+	if err := ws.Disconnect(); err != nil {
+		t.Fatalf("first Disconnect: %v", err)
+	}
+	if err := ws.Disconnect(); err != nil {
+		t.Fatalf("second Disconnect: %v", err)
+	}
+}
+
+func TestWebSocket_ConnectAfterDisconnect_Errors(t *testing.T) {
+	ws := NewBybitPublicWebSocket("wss://example.invalid", nil)
+	_ = ws.Disconnect()
+	if err := ws.Connect(); err == nil || !strings.Contains(err.Error(), "closed") {
+		t.Fatalf("expected closed error, got %v", err)
+	}
+}
+
+func TestWebSocket_ConnectFailsCleanly(t *testing.T) {
+	ws := NewBybitPublicWebSocket("ws://127.0.0.1:1", nil)
+	err := ws.Connect()
+	if err == nil {
+		t.Fatal("expected dial error against unreachable address")
+	}
+	if !strings.Contains(err.Error(), "websocket dial") {
+		t.Fatalf("expected wrapped dial error, got %v", err)
+	}
+	// After failed Connect, Disconnect must still be safe.
+	if derr := ws.Disconnect(); derr != nil {
+		t.Fatalf("Disconnect after failed Connect: %v", derr)
+	}
+}
+
+func TestSendBeforeConnect_Errors(t *testing.T) {
+	ws := NewBybitPublicWebSocket("wss://example.invalid", nil)
+	_, err := ws.SendSubscription([]string{"orderbook.1.BTCUSDT"})
+	if err == nil || !strings.Contains(err.Error(), "not connected") {
+		t.Fatalf("expected not-connected error, got %v", err)
+	}
+}

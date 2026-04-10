@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
+
 	bybit "github.com/khanbekov/go-bybit"
 )
 
@@ -10,6 +12,11 @@ func main() {
 		fmt.Println("Received:", message)
 		return nil
 	}, bybit.WithPingInterval(2))
-	_, _ = ws.Connect().SendSubscription([]string{"order", "position", "wallet"})
+	if err := ws.Connect(); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := ws.SendSubscription([]string{"order", "position", "wallet"}); err != nil {
+		log.Fatal(err)
+	}
 	select {}
 }

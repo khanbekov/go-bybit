@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
-	bybit "github.com/khanbekov/go-bybit"
+	"log"
 	"time"
+
+	bybit "github.com/khanbekov/go-bybit"
 )
 
 func main() {
@@ -11,7 +13,10 @@ func main() {
 		fmt.Println("Received:", message)
 		return nil
 	}, bybit.WithPingInterval(10))
-	_, _ = ws.Connect().SendTradeRequest(map[string]interface{}{
+	if err := ws.Connect(); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := ws.SendTradeRequest(map[string]interface{}{
 		"reqId": "test-005",
 		"header": map[string]string{
 			"X-BAPI-TIMESTAMP":   fmt.Sprintf("%d", time.Now().UnixMilli()),
@@ -30,6 +35,8 @@ func main() {
 				"timeInForce": "PostOnly",
 			},
 		},
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 	select {}
 }

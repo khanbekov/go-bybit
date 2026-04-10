@@ -141,29 +141,34 @@ fmt.Println(bybit.PrettyPrint(accountResult))
 ### Websocket Trade channel
 ```go
 ws := bybit.NewBybitPrivateWebSocket(bybit.WEBSOCKET_TRADE_TESTNET, "YOUR_API_KEY", "YOUR_API_SECRET", func(message string) error {
-fmt.Println("Received:", message)
-return nil
+    fmt.Println("Received:", message)
+    return nil
 }, bybit.WithPingInterval(10))
-_, _ = ws.Connect().SendTradeRequest(map[string]interface{}{
-"reqId": "test-005",
-"header": map[string]string{
-"X-BAPI-TIMESTAMP":   fmt.Sprintf("%d", time.Now().UnixMilli()),
-"X-BAPI-RECV-WINDOW": "8000",
-"Referer":            "bot-001",
-},
-"op": "order.create",
-"args": []interface{}{
-map[string]interface{}{
-"symbol":      "ETHUSDT",
-"side":        "Buy",
-"orderType":   "Limit",
-"qty":         "0.2",
-"price":       "2800",
-"category":    "linear",
-"timeInForce": "PostOnly",
-},
-},
-})
+if err := ws.Connect(); err != nil {
+    log.Fatal(err)
+}
+if _, err := ws.SendTradeRequest(map[string]interface{}{
+    "reqId": "test-005",
+    "header": map[string]string{
+        "X-BAPI-TIMESTAMP":   fmt.Sprintf("%d", time.Now().UnixMilli()),
+        "X-BAPI-RECV-WINDOW": "8000",
+        "Referer":            "bot-001",
+    },
+    "op": "order.create",
+    "args": []interface{}{
+        map[string]interface{}{
+            "symbol":      "ETHUSDT",
+            "side":        "Buy",
+            "orderType":   "Limit",
+            "qty":         "0.2",
+            "price":       "2800",
+            "category":    "linear",
+            "timeInForce": "PostOnly",
+        },
+    },
+}); err != nil {
+    log.Fatal(err)
+}
 select {}
 ```
 
@@ -171,20 +176,45 @@ select {}
 - Order book Subscribe
 ```go
 ws := bybit.NewBybitPublicWebSocket("wss://stream.bybit.com/v5/public/spot", func(message string) error {
-fmt.Println("Received:", message)
-return nil
+    fmt.Println("Received:", message)
+    return nil
 })
-_ = ws.Connect([]string{"orderbook.1.BTCUSDT"})
+if err := ws.Connect(); err != nil {
+    log.Fatal(err)
+}
+if _, err := ws.SendSubscription([]string{"orderbook.1.BTCUSDT"}); err != nil {
+    log.Fatal(err)
+}
+select {}
+```
+
+- Kline Subscribe (real-time candles)
+```go
+ws := bybit.NewBybitPublicWebSocket(bybit.LINEAR_MAINNET, func(message string) error {
+    fmt.Println("Received:", message)
+    return nil
+})
+if err := ws.Connect(); err != nil {
+    log.Fatal(err)
+}
+if _, err := ws.SubscribeKline(bybit.KlineInterval1m, "BTCUSDT", "ETHUSDT"); err != nil {
+    log.Fatal(err)
+}
 select {}
 ```
 
 ### Websocket private channel
 ```go
 ws := bybit.NewBybitPrivateWebSocket("wss://stream-testnet.bybit.com/v5/private", "YOUR_API_KEY", "YOUR_API_SECRET", func(message string) error {
-	fmt.Println("Received:", message)
-	return nil
+    fmt.Println("Received:", message)
+    return nil
 })
-_ = ws.Connect([]string{"order"})
+if err := ws.Connect(); err != nil {
+    log.Fatal(err)
+}
+if _, err := ws.SendSubscription([]string{"order", "position", "wallet"}); err != nil {
+    log.Fatal(err)
+}
 select {}
 ```
 

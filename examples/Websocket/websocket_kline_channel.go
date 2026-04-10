@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	bybit "github.com/khanbekov/go-bybit"
 )
@@ -11,6 +12,11 @@ func main() {
 		fmt.Println("Received:", message)
 		return nil
 	})
-	_, _ = ws.Connect().SubscribeKline(bybit.KlineInterval1m, "BTCUSDT", "ETHUSDT")
+	if err := ws.Connect(); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := ws.SubscribeKline(bybit.KlineInterval1m, "BTCUSDT", "ETHUSDT"); err != nil {
+		log.Fatal(err)
+	}
 	select {}
 }

@@ -34,11 +34,6 @@ const (
 	WEBSOCKET_PRIVATE_DEMO    = "wss://stream-demo.bybit.com/v5/private"
 	WEBSOCKET_TRADE_DEMO      = "wss://stream-demo.bybit.com/v5/trade"
 
-	// Deprecated: V3 is deprecated and replaced by v5
-	V3_CONTRACT_PRIVATE = "wss://stream.bybit.com/contract/private/v3"
-	V3_UNIFIED_PRIVATE  = "wss://stream.bybit.com/unified/private/v3"
-	V3_SPOT_PRIVATE     = "wss://stream.bybit.com/spot/private/v3"
-
 	// Globals
 	TimestampKey  = "X-BAPI-TIMESTAMP"
 	SignatureKey  = "X-BAPI-SIGN"

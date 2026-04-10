@@ -216,9 +216,9 @@ func (b *WebSocket) SendRequest(op string, args map[string]interface{}, headers 
 	return b, nil
 }
 
-func (b *WebSocket) SendTradeRequest(tradeTruest map[string]interface{}) (*WebSocket, error) {
-	b.logger.Debug().Interface("headers", tradeTruest["header"]).Str("op", fmt.Sprintf("%v", tradeTruest["op"])).Interface("args", tradeTruest["args"]).Msg("Sending WebSocket trade request")
-	if err := b.sendAsJson(tradeTruest); err != nil {
+func (b *WebSocket) SendTradeRequest(tradeRequest map[string]interface{}) (*WebSocket, error) {
+	b.logger.Debug().Str("op", fmt.Sprintf("%v", tradeRequest["op"])).Msg("Sending WebSocket trade request")
+	if err := b.sendAsJson(tradeRequest); err != nil {
 		b.logger.Warn().Err(err).Msg("Failed to send WebSocket trade request")
 		return b, err
 	}
@@ -271,12 +271,6 @@ func (b *WebSocket) requiresAuthentication() bool {
 	return b.url == WEBSOCKET_PRIVATE_MAINNET || b.url == WEBSOCKET_PRIVATE_TESTNET ||
 		b.url == WEBSOCKET_TRADE_MAINNET || b.url == WEBSOCKET_TRADE_TESTNET ||
 		b.url == WEBSOCKET_TRADE_DEMO || b.url == WEBSOCKET_PRIVATE_DEMO
-	// v3 offline
-	/*
-		b.url == V3_CONTRACT_PRIVATE ||
-			b.url == V3_UNIFIED_PRIVATE ||
-			b.url == V3_SPOT_PRIVATE
-	*/
 }
 
 func (b *WebSocket) sendAuth() error {

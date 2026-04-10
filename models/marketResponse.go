@@ -155,11 +155,6 @@ type MarketOrderBookResponse struct {
 	Time       int64         `json:"time"`
 }
 
-// type OrderBookEntry struct {
-// Price string `json:"0"`
-// Size  string `json:"1"`
-// }
-
 type OrderBookEntry []string
 
 type OrderBookInfo struct {

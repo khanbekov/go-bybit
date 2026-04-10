@@ -46,3 +46,34 @@ const (
 	RecvWindowKey = "X-BAPI-RECV-WINDOW"
 	SignTypeKey   = "X-BAPI-SIGN-TYPE"
 )
+
+// KlineInterval is a Bybit V5 kline interval, used for both REST and the
+// public websocket kline.{interval}.{symbol} stream.
+// Docs: https://bybit-exchange.github.io/docs/v5/websocket/public/kline
+type KlineInterval string
+
+const (
+	KlineInterval1m  KlineInterval = "1"
+	KlineInterval3m  KlineInterval = "3"
+	KlineInterval5m  KlineInterval = "5"
+	KlineInterval15m KlineInterval = "15"
+	KlineInterval30m KlineInterval = "30"
+	KlineInterval1h  KlineInterval = "60"
+	KlineInterval2h  KlineInterval = "120"
+	KlineInterval4h  KlineInterval = "240"
+	KlineInterval6h  KlineInterval = "360"
+	KlineInterval12h KlineInterval = "720"
+	KlineIntervalD   KlineInterval = "D"
+	KlineIntervalW   KlineInterval = "W"
+	KlineIntervalM   KlineInterval = "M"
+)
+
+func (k KlineInterval) IsValid() bool {
+	switch k {
+	case KlineInterval1m, KlineInterval3m, KlineInterval5m, KlineInterval15m,
+		KlineInterval30m, KlineInterval1h, KlineInterval2h, KlineInterval4h,
+		KlineInterval6h, KlineInterval12h, KlineIntervalD, KlineIntervalW, KlineIntervalM:
+		return true
+	}
+	return false
+}

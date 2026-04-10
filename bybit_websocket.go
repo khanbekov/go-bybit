@@ -173,6 +173,27 @@ func (b *WebSocket) SendSubscription(args []string) (*WebSocket, error) {
 	return b, nil
 }
 
+// SubscribeKline subscribes to the public kline stream for the given
+// interval and one or more symbols. The topic format is
+// kline.{interval}.{symbol} (e.g. kline.1.BTCUSDT).
+// Docs: https://bybit-exchange.github.io/docs/v5/websocket/public/kline
+func (b *WebSocket) SubscribeKline(interval KlineInterval, symbols ...string) (*WebSocket, error) {
+	if !interval.IsValid() {
+		return b, fmt.Errorf("bybit_connector: invalid kline interval %q", string(interval))
+	}
+	if len(symbols) == 0 {
+		return b, fmt.Errorf("bybit_connector: SubscribeKline requires at least one symbol")
+	}
+	topics := make([]string, 0, len(symbols))
+	for _, s := range symbols {
+		if s == "" {
+			return b, fmt.Errorf("bybit_connector: SubscribeKline received an empty symbol")
+		}
+		topics = append(topics, fmt.Sprintf("kline.%s.%s", interval, s))
+	}
+	return b.SendSubscription(topics)
+}
+
 // SendRequest sendRequest sends a custom request over the WebSocket connection.
 func (b *WebSocket) SendRequest(op string, args map[string]interface{}, headers map[string]string, reqId ...string) (*WebSocket, error) {
 	finalReqId := uuid.New().String()

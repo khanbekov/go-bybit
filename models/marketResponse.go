@@ -71,6 +71,31 @@ type MarketPremiumIndexPriceKlineResponse struct {
 	List     []*MarketPremiumIndexPriceKlineCandle `json:"list"`
 }
 
+// KlineStreamItem is a single candle update pushed over the public
+// websocket topic kline.{interval}.{symbol}. Bybit V5 pushes a batch of
+// these on every candle tick; Confirm is true when the candle has closed.
+// Docs: https://bybit-exchange.github.io/docs/v5/websocket/public/kline
+type KlineStreamItem struct {
+	Start     int64  `json:"start"`
+	End       int64  `json:"end"`
+	Interval  string `json:"interval"`
+	Open      string `json:"open"`
+	Close     string `json:"close"`
+	High      string `json:"high"`
+	Low       string `json:"low"`
+	Volume    string `json:"volume"`
+	Turnover  string `json:"turnover"`
+	Confirm   bool   `json:"confirm"`
+	Timestamp int64  `json:"timestamp"`
+}
+
+type KlineStreamEvent struct {
+	Topic string            `json:"topic"`
+	Type  string            `json:"type"`
+	Ts    int64             `json:"ts"`
+	Data  []KlineStreamItem `json:"data"`
+}
+
 type InstrumentInfoResponse struct {
 	Category       Category      `json:"category"`
 	NextPageCursor string        `json:"nextPageCursor"`

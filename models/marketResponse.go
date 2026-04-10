@@ -144,7 +144,7 @@ type LotSizeFilter struct {
 	BasePrecision       string `json:"basePrecision"`
 	QuotePrecision      string `json:"quotePrecision"`
 	MaxOrderAmt         string `json:"maxOrderAmt"`
-	MinOrderAmt         string `jsoN:"minOrderAmt"`
+	MinOrderAmt         string `json:"minOrderAmt"`
 }
 
 type MarketOrderBookResponse struct {

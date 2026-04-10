@@ -213,7 +213,7 @@ func (c *Client) parseRequest(r *Request, opts ...RequestOption) (err error) {
 	if queryString != "" {
 		fullURL = fmt.Sprintf("%s?%s", fullURL, queryString)
 	}
-	c.debug("full url: %s, body: %s", fullURL, body)
+	c.debug("prepared %s %s", r.method, fullURL)
 	r.fullURL = fullURL
 	r.body = body
 	r.header = header
@@ -231,7 +231,7 @@ func (c *Client) callAPI(ctx context.Context, r *Request, opts ...RequestOption)
 	}
 	req = req.WithContext(ctx)
 	req.Header = r.header
-	c.debug("request: %#v", req)
+	c.debug("calling %s %s", req.Method, req.URL.String())
 	f := c.do
 	if f == nil {
 		f = c.HTTPClient.Do
@@ -252,9 +252,8 @@ func (c *Client) callAPI(ctx context.Context, r *Request, opts ...RequestOption)
 			err = cerr
 		}
 	}()
-	c.debug("response: %#v", res)
+	c.debug("response status %d (%d bytes)", res.StatusCode, len(data))
 	c.debug("response body: %s", string(data))
-	c.debug("response status code: %d", res.StatusCode)
 
 	if res.StatusCode >= http.StatusBadRequest {
 		var (

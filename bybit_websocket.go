@@ -289,14 +289,14 @@ func (b *WebSocket) sendAuth() error {
 
 	// Convert to hexadecimal instead of base64
 	signature := hex.EncodeToString(h.Sum(nil))
-	b.logger.Debug().Str("signature", signature).Msg("Generated WebSocket authentication signature")
+	reqID := uuid.New().String()
+	b.logger.Debug().Str("req_id", reqID).Int64("expires", expires).Msg("Sending WebSocket authentication")
 
 	authMessage := map[string]interface{}{
-		"req_id": uuid.New(),
+		"req_id": reqID,
 		"op":     "auth",
 		"args":   []interface{}{b.apiKey, expires, signature},
 	}
-	b.logger.Debug().Interface("args", authMessage["args"]).Msg("Sending WebSocket authentication")
 	return b.sendAsJson(authMessage)
 }
 

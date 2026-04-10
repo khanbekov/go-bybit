@@ -71,7 +71,9 @@ func (s *BybitClientRequest) SetSpotMarginLeverage(ctx context.Context, opts ...
 		endpoint: "/v5/spot-margin-trade/set-leverage",
 		secType:  secTypeSigned,
 	}
-	r.setParams(s.Params)
+	if err = r.setParams(s.Params); err != nil {
+		return nil, err
+	}
 	data, err := s.c.callAPI(ctx, r, opts...)
 	if err != nil {
 		return nil, err
@@ -96,7 +98,9 @@ func (s *BybitClientRequest) GetSpotMarginState(ctx context.Context, opts ...Req
 		endpoint: "/v5/spot-margin-trade/state",
 		secType:  secTypeSigned,
 	}
-	r.setParams(s.Params)
+	if err = r.setParams(s.Params); err != nil {
+		return nil, err
+	}
 	data, err := s.c.callAPI(ctx, r, opts...)
 	if err != nil {
 		return nil, err
@@ -124,7 +128,9 @@ func (s *BybitClientRequest) ToggleSpotMarginTrade(ctx context.Context, opts ...
 		endpoint: endpoint,
 		secType:  secTypeSigned,
 	}
-	r.setParams(s.Params)
+	if err = r.setParams(s.Params); err != nil {
+		return nil, err
+	}
 	data, err := s.c.callAPI(ctx, r, opts...)
 	if err != nil {
 		return nil, err

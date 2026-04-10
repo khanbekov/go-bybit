@@ -261,7 +261,9 @@ func (order *Order) Do(ctx context.Context, opts ...RequestOption) (res *ServerR
 	if order.slippageToleranceType != nil {
 		m["slippageToleranceType"] = *order.slippageToleranceType
 	}
-	r.setParams(m)
+	if err := r.setParams(m); err != nil {
+		return nil, err
+	}
 	data, err := order.c.callAPI(ctx, r, opts...)
 	if err != nil {
 		return nil, err

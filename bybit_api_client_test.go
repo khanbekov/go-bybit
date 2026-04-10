@@ -102,13 +102,15 @@ func NewRequest() *Request {
 }
 
 func NewSignedRequest() *Request {
-	return NewRequest().setParams(Params{
+	r := NewRequest()
+	_ = r.setParams(Params{
 		"X-BAPI-TIMESTAMP":   "",
 		"X-BAPI-SIGN":        "",
 		"X-BAPI-API-KEY":     "",
 		"X-BAPI-RECV-WINDOW": "5000",
 		"X-BAPI-SIGN-TYPE":   "2",
 	})
+	return r
 }
 
 type assertReqFunc func(r *Request)

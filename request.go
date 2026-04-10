@@ -3,7 +3,6 @@ package bybit_connector
 import (
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 )
@@ -48,21 +47,24 @@ func (r *Request) setParam(key string, value interface{}) *Request {
 	return r
 }
 
-// setParams set Params with key/values to query string or body
-func (r *Request) setParams(m Params) *Request {
-	if r.method == http.MethodGet {
+// setParams sets the given params as either query string (GET) or JSON body (POST).
+// It returns an error if the POST body cannot be marshaled — callers must
+// never proceed to transport when this fails, otherwise the request would
+// be sent without its payload.
+func (r *Request) setParams(m Params) error {
+	switch r.method {
+	case http.MethodGet:
 		for k, v := range m {
 			r.setParam(k, v)
 		}
-	} else if r.method == http.MethodPost {
+	case http.MethodPost:
 		jsonData, err := json.Marshal(m)
 		if err != nil {
-			log.Fatal(err)
+			return fmt.Errorf("bybit_connector: marshal request params: %w", err)
 		}
 		r.Params = jsonData
 	}
-
-	return r
+	return nil
 }
 
 func (r *Request) validate() (err error) {

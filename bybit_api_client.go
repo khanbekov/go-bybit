@@ -38,9 +38,10 @@ type ServerResponse struct {
 }
 
 func SendRequest(ctx context.Context, opts []RequestOption, r *Request, s *BybitClientRequest, err error) ([]byte, error) {
-	r.setParams(s.Params)
-	data, err := s.c.callAPI(ctx, r, opts...)
-	return data, err
+	if err := r.setParams(s.Params); err != nil {
+		return nil, err
+	}
+	return s.c.callAPI(ctx, r, opts...)
 }
 
 func GetServerResponse(err error, data []byte) (*ServerResponse, error) {

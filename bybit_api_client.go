@@ -23,6 +23,17 @@ import (
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
+// computeSignature builds the Bybit V5 REST signature: HMAC-SHA256 over
+// (timestamp + apiKey + recvWindow + payload), hex-encoded. payload is
+// the JSON request body for POST requests or the URL-encoded query
+// string for GET requests.
+// Docs: https://bybit-exchange.github.io/docs/v5/guide#authentication
+func computeSignature(apiSecret, apiKey, timestamp, recvWindow, payload string) string {
+	h := hmac.New(sha256.New, []byte(apiSecret))
+	h.Write([]byte(timestamp + apiKey + recvWindow + payload))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
 type BybitClientRequest struct {
 	c      *Client
 	Params map[string]interface{}
@@ -189,26 +200,23 @@ func (c *Client) parseRequest(r *Request, opts ...RequestOption) (err error) {
 	header.Set("User-Agent", fmt.Sprintf("%s/%s", Name, Version))
 
 	if r.secType == secTypeSigned {
-		timeStamp := GetCurrentTime()
+		timeStamp := strconv.FormatInt(GetCurrentTime(), 10)
 		header.Set(SignTypeKey, "2")
 		header.Set(ApiRequestKey, c.APIKey)
-		header.Set(TimestampKey, strconv.FormatInt(timeStamp, 10))
+		header.Set(TimestampKey, timeStamp)
 		if r.recvWindow == "" {
 			r.recvWindow = "5000"
 		}
 		header.Set(RecvWindowKey, r.recvWindow)
 
-		var signatureBase []byte
-		if r.method == "POST" {
+		var payload string
+		if r.method == http.MethodPost {
 			header.Set("Content-Type", "application/json")
-			signatureBase = []byte(strconv.FormatInt(timeStamp, 10) + c.APIKey + r.recvWindow + string(r.Params[:]))
+			payload = string(r.Params)
 		} else {
-			signatureBase = []byte(strconv.FormatInt(timeStamp, 10) + c.APIKey + r.recvWindow + queryString)
+			payload = queryString
 		}
-		hmac256 := hmac.New(sha256.New, []byte(c.APISecret))
-		hmac256.Write(signatureBase)
-		signature := hex.EncodeToString(hmac256.Sum(nil))
-		header.Set(SignatureKey, signature)
+		header.Set(SignatureKey, computeSignature(c.APISecret, c.APIKey, timeStamp, r.recvWindow, payload))
 	}
 	if queryString != "" {
 		fullURL = fmt.Sprintf("%s?%s", fullURL, queryString)

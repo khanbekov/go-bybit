@@ -122,7 +122,7 @@ func (s *BybitClientRequest) GetTransferableAmount(ctx context.Context, opts ...
 
 func (s *BybitClientRequest) SetSpotHedgeMode(ctx context.Context, opts ...RequestOption) (res *ServerResponse, err error) {
 	r := &Request{
-		method:   http.MethodGet,
+		method:   http.MethodPost,
 		endpoint: "/v5/account/set-hedging-mode",
 		secType:  secTypeSigned,
 	}

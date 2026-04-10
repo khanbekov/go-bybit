@@ -181,7 +181,7 @@ func (s *BybitClientRequest) RequestTestFund(ctx context.Context, opts ...Reques
 		return nil, err
 	}
 	r := &Request{
-		method:   http.MethodGet,
+		method:   http.MethodPost,
 		endpoint: "/v5/account/demo-apply-money",
 		secType:  secTypeSigned,
 	}
